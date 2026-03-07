@@ -1,0 +1,440 @@
+/* ============================================================
+   MOBILE STYLESHEET — phones & tablets (max 1023px)
+   Desktop styles in index.css are NOT touched here.
+   All rules are wrapped in @media max-width: 1023px.
+   ============================================================ */
+
+/* ── Mobile Nav ─────────────────────────────────────────── */
+.mob-nav {
+  display: none;
+}
+
+.mob-drawer {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+
+  /* Hide desktop nav, show mobile nav */
+  nav.site-nav { display: none !important; }
+  .cursor, .cursor-trail, .flare { display: none !important; }
+  body { cursor: auto !important; }
+
+  /* ── Mobile Nav Bar ── */
+  .mob-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed;
+    inset: 0 0 auto 0;
+    z-index: 900;
+    padding: 14px 18px;
+    background: rgba(5,5,5,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+
+  .mob-brand {
+    font-family: "Bebas Neue", system-ui, sans-serif;
+    letter-spacing: .35em;
+    font-size: 20px;
+    text-decoration: none;
+    color: var(--fg);
+  }
+  .mob-brand em { color: var(--red); font-style: normal; }
+
+  /* ── Hamburger ── */
+  .mob-burger {
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    cursor: pointer;
+    padding: 0;
+    transition: border-color .2s;
+  }
+  .mob-burger:active { border-color: rgba(255,0,60,0.6); }
+  .mob-burger span {
+    display: block;
+    width: 18px;
+    height: 1.5px;
+    background: rgba(240,240,240,0.85);
+    border-radius: 2px;
+    transition: transform .25s ease, opacity .2s ease;
+    transform-origin: center;
+  }
+  .mob-burger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .mob-burger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+  .mob-burger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+  /* ── Drawer ── */
+  .mob-drawer {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 850;
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .mob-drawer.open {
+    pointer-events: auto;
+    visibility: visible;
+  }
+
+  .mob-drawer-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 840;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .mob-drawer-inner {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(300px, 85vw);
+    background: rgba(8,8,8,0.98);
+    border-left: 1px solid rgba(255,0,60,0.22);
+    display: flex;
+    flex-direction: column;
+    padding: 72px 28px 40px;
+    gap: 0;
+    transform: translateX(100%);
+    transition: transform .3s cubic-bezier(0.22, 1, 0.36, 1);
+    z-index: 851;
+    overflow-y: auto;
+  }
+  .mob-drawer.open .mob-drawer-inner {
+    transform: translateX(0);
+  }
+
+  .mob-drawer-brand {
+    font-family: "Bebas Neue", system-ui, sans-serif;
+    letter-spacing: .35em;
+    font-size: 26px;
+    color: var(--fg);
+    margin-bottom: 4px;
+  }
+  .mob-drawer-brand em { color: var(--red); font-style: normal; }
+
+  .mob-drawer-tag {
+    font-size: 9px;
+    letter-spacing: .45em;
+    color: rgba(240,240,240,0.3);
+    text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+
+  .mob-drawer-links {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+  }
+
+  .mob-link {
+    display: block;
+    text-decoration: none;
+    color: rgba(240,240,240,0.7);
+    font-size: 22px;
+    font-family: "Bebas Neue", system-ui, sans-serif;
+    letter-spacing: .22em;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    transition: color .15s, padding-left .15s;
+    background: transparent;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+  }
+  .mob-link:hover, .mob-link:active { color: #fff; padding-left: 6px; }
+  .mob-link.active { color: var(--red); border-bottom-color: rgba(255,0,60,0.25); }
+
+  .mob-scan-btn {
+    color: rgba(240,240,240,0.7);
+    font-family: "Bebas Neue", system-ui, sans-serif;
+    font-size: 22px;
+    letter-spacing: .22em;
+  }
+  .mob-scan-btn:hover { color: var(--red); }
+
+  .mob-drawer-socials {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .mob-drawer-socials a { color: rgba(240,240,240,0.35); transition: color .2s; display: flex; }
+  .mob-drawer-socials a:active { color: rgba(240,240,240,0.8); }
+
+  /* ── Global spacing for mobile ── */
+  .wrap { padding: 0 16px; }
+  .page-wrap { padding-top: 64px; }
+
+  /* ── Hero section ── */
+  #hero {
+    padding-top: 64px;
+    min-height: 100svh;
+  }
+  .hero-inner { padding: 0 16px; }
+
+  h1.hero-title {
+    font-size: clamp(58px, 16vw, 100px);
+    line-height: .88;
+    margin: 16px 0 0;
+  }
+
+  .eyebrow {
+    font-size: 9px;
+    letter-spacing: .5em;
+  }
+
+  .hero-sub {
+    font-size: 11px;
+    letter-spacing: .18em;
+    line-height: 1.8;
+    margin-top: 14px;
+  }
+
+  .cta {
+    margin-top: 24px;
+    gap: 10px;
+    flex-direction: column;
+    align-items: center;
+  }
+  .btn {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+    padding: 14px 20px;
+    font-size: 11px;
+  }
+
+  /* ── Scroll Carousel ── */
+  .sc-scroll-wrapper { height: 200vh; }
+  .sc-card { width: clamp(120px, 36vw, 180px); }
+
+  /* ── Faction tagline ── */
+  .faction-tagline {
+    font-size: clamp(13px, 4vw, 20px);
+    padding: 20px 16px 16px;
+    gap: 4px;
+  }
+
+  /* ── MAD Section ── */
+  .mad-section { padding: 64px 0 48px; }
+  .mad-title { font-size: clamp(36px, 10vw, 64px); }
+  .mad-intro { font-size: 12px; letter-spacing: .12em; }
+  .mad-cards {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    gap: 12px;
+  }
+  .mad-card { padding: 18px 16px; }
+  .mad-card-abbr { font-size: 36px; }
+  .mad-card-name { font-size: 11px; }
+  .mad-card-desc { font-size: 10px; }
+
+  /* ── PsiCare Section ── */
+  .psicare-section { padding: 64px 0 48px; }
+  .ps-title { font-size: clamp(36px, 10vw, 64px); }
+  .ps-sub-title { font-size: clamp(18px, 5vw, 28px); }
+  .ps-acronym-row {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+  .ps-letter { padding: 12px 0; font-size: clamp(18px, 5vw, 32px); }
+  .ps-cards {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+    gap: 10px;
+  }
+  .ps-card { padding: 18px 16px; }
+  .ps-card-letters { font-size: 32px; }
+  .ps-card-full { font-size: 11px; }
+  .ps-card-desc { font-size: 10px; }
+
+  /* ── Harekins Section ── */
+  .harekins-section { padding: 64px 0 48px; }
+  .lago-title { font-size: clamp(40px, 12vw, 72px); }
+  .lago-body { font-size: 12px; letter-spacing: .12em; line-height: 1.8; }
+  .lago-traits { gap: 8px; margin-top: 24px; }
+  .lago-trait { font-size: 9px; letter-spacing: .2em; padding: 7px 11px; }
+  .lago-watermark { font-size: clamp(80px, 28vw, 160px); }
+
+  /* Glitch visitors smaller on mobile */
+  .gv-lago img, .gv-lago-left img {
+    height: clamp(120px, 22vw, 200px);
+    width: clamp(120px, 22vw, 200px);
+  }
+
+  /* ── MegaETH Section ── */
+  .megaeth-section { padding: 64px 0 48px; }
+  .me-title { font-size: clamp(44px, 12vw, 80px); }
+  .me-body { font-size: 12px; letter-spacing: .14em; }
+  .me-btns { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  /* ── Cathedral footer image ── */
+  .cathedral-footer-section { min-height: 40vh; }
+
+  /* ── Footer ── */
+  footer { padding: 32px 16px; }
+  .foot {
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  /* ── Section headings ── */
+  .section-h { font-size: 36px; }
+  .section-p { font-size: 11px; letter-spacing: .1em; }
+
+  /* ── Screening page ── */
+  #screening { padding: 32px 0 60px; }
+  .screen-card { padding: 14px; }
+  .cd {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .box { padding: 12px 8px; }
+  .box span { font-size: 40px; }
+  .box em { font-size: 9px; }
+  .seat {
+    flex-direction: column;
+    gap: 8px;
+    font-size: 11px;
+    letter-spacing: 2px;
+    align-items: flex-start;
+  }
+
+  /* ── Dataleak page ── */
+  .dl-page { padding-top: 64px; }
+  .dl-header { padding: 24px 16px 0; }
+  .dl-title { font-size: clamp(52px, 18vw, 120px); margin: 12px 0 14px; }
+  .dl-intro { font-size: 12px; letter-spacing: .16em; }
+  .terminal { max-width: 100%; }
+  .tbody { max-height: 360px; font-size: 11px; }
+  .etop { flex-direction: row; gap: 10px; }
+  .eimg { width: 60px; height: 60px; }
+  .edes { font-size: 10px; }
+  .esub { font-size: 8px; }
+  .edesc { font-size: 8px; }
+  .efoot { flex-direction: column; gap: 8px; align-items: flex-start; }
+
+  /* ── Profile Modal ── */
+  .modal-backdrop { padding: 12px; }
+  .panel { padding: 14px; border-radius: 16px; }
+  .ptitle { font-size: 26px; }
+  .kv {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .kv > div { padding: 10px; }
+  .k { font-size: 9px; }
+  .v { font-size: 15px; }
+  .note { font-size: 9px; }
+  .panel-actions { gap: 8px; }
+  .panel-actions .btn { padding: 11px 16px; font-size: 10px; }
+
+  /* ── Scanner / ID Modal ── */
+  .id-modal-backdrop { padding: 0; align-items: flex-end; }
+  .id-modal-inner {
+    width: 100%;
+    max-height: 96svh;
+    overflow-y: auto;
+  }
+  .id-close {
+    top: 8px;
+    right: 8px;
+    position: fixed;
+    z-index: 20;
+    font-size: 9px;
+    padding: 6px 10px;
+  }
+  .id-card { border-radius: 0; border-left: none; border-right: none; border-bottom: none; }
+  .id-body {
+    grid-template-columns: 1fr;
+  }
+  .id-photo-panel {
+    border-right: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    padding: 12px;
+  }
+  .id-photo-frame { max-width: 280px; margin: 0 auto; }
+  .id-controls { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .id-attrs-panel { padding: 14px 16px; }
+  .id-name-prefix { font-size: clamp(16px, 5vw, 22px); }
+  .id-name-input { font-size: clamp(16px, 5vw, 22px); max-width: 200px; }
+  .id-attrs-grid { gap: 12px 18px; }
+  .id-attr-value { font-size: 18px; }
+  .id-cyberpunk-details { display: none; }
+  .id-barcode-label { display: none; }
+
+  /* ── Red Pages ── */
+  .rp-page { padding-top: 64px; }
+  .rp-hero { min-height: 30vh; padding: 40px 16px; }
+  .rp-hero-title { font-size: clamp(40px, 12vw, 72px); }
+  .rp-hero-strip-info { font-size: 11px; }
+  .rp-wrap { padding: 28px 14px; gap: 40px; }
+  .rp-viewer-title { font-size: clamp(18px, 5vw, 28px); padding: 14px 14px 4px; }
+  .rp-viewer-rsi { padding: 0 14px 14px; }
+  .rp-panels-wrap { padding: 0 12px 16px; }
+  .rp-panels-stage { max-width: 100%; }
+  .rp-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 12px 14px;
+  }
+  .rp-ctrl-btn { font-size: 12px; padding: 10px 14px; }
+  .rp-viewer-bar { gap: 5px; font-size: 9px; padding: 8px 12px; }
+
+  .rp-archive-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .rp-archive-tile-title { font-size: 9px; }
+
+  .rp-footer { padding: 32px 16px 24px; }
+  .rp-footer-quote { font-size: clamp(15px, 4vw, 22px); }
+
+  /* ── Lightbox (both) ── */
+  .lb-backdrop { padding: 12px; }
+  .lb-box { width: min(380px, 96vw); }
+  .rp-lightbox-window { max-width: 96vw; max-height: 92svh; }
+  .rp-lightbox-img-wrap img { max-width: 96vw; max-height: 80svh; }
+  .rp-lightbox-close { top: -34px; }
+
+  /* ── Splash ── */
+  .splash-inner { padding: 0 20px; }
+  .splash-brand { font-size: clamp(44px, 16vw, 80px); }
+  .splash-enter { padding: 14px 32px; font-size: 12px; letter-spacing: .3em; }
+
+  /* ── Misc utility fixes ── */
+  .rule { opacity: .18; }
+}
+
+/* ── Extra small phones ── */
+@media (max-width: 390px) {
+  h1.hero-title { font-size: clamp(48px, 18vw, 80px); }
+  .cta .btn { padding: 13px 16px; font-size: 10px; }
+  .mob-drawer-inner { width: 92vw; }
+  .rp-archive-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+  .id-controls { grid-template-columns: 1fr; }
+}

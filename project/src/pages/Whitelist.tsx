@@ -1,146 +1,246 @@
-import { useState, useCallback } from "react";
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MADJACKET — CLEARANCE REGISTRY</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  body {
+    background: #000;
+    color: #ccc;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+  }
 
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 2 L54 17 L54 47 L28 62 L2 47 L2 17 Z' fill='none' stroke='%23220000' stroke-width='1'/%3E%3Cpath d='M28 62 L54 77 L54 100' fill='none' stroke='%23220000' stroke-width='1'/%3E%3Cpath d='M28 62 L2 77 L2 100' fill='none' stroke='%23220000' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 56px 100px;
+    pointer-events: none;
+    z-index: 0;
+  }
 
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 520px;
+    margin: 0 auto;
+    padding: 60px 24px;
+  }
 
+  .site-title {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #cc0000;
+    text-transform: uppercase;
+    margin-bottom: 48px;
+    border-left: 2px solid #cc0000;
+    padding-left: 10px;
+  }
 
-const FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSdmr6WxzoyhKIp7Ytb67ugGv9cA2e8UFnkUn3CoCz6mvKXk_A/formResponse";
-const ENTRY = "entry.718361902";
-const LOCAL_KEY = "mj_whitelist";
+  .field-label {
+    font-size: 9px;
+    letter-spacing: 0.25em;
+    color: #550000;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 8px;
+  }
 
-function getList(): string[] {
-  try { return JSON.parse(localStorage.getItem(LOCAL_KEY) || "[]"); } catch { return []; }
-}
-function saveAddr(a: string) {
-  const l = getList(); if (!l.includes(a)) { l.push(a); localStorage.setItem(LOCAL_KEY, JSON.stringify(l)); }
-}
-function inList(a: string) { return getList().includes(a); }
-function isValidAddr(a: string) { return /^0x[0-9a-fA-F]{40}$/.test(a); }
+  input[type="text"] {
+    width: 100%;
+    background: #000;
+    border: 1px solid #220000;
+    border-bottom: 1px solid #cc0000;
+    color: #ccc;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    padding: 10px 12px;
+    outline: none;
+    margin-bottom: 10px;
+  }
 
-type StatusState = { type: "success" | "error" | null; lines: string[] };
+  input[type="text"]:focus { border-color: #550000; border-bottom-color: #ff2200; }
+  input::placeholder { color: #2a2a2a; font-size: 11px; }
 
-export default function Whitelist() {
-  const [regAddr, setRegAddr] = useState("");
-  const [verAddr, setVerAddr] = useState("");
-  const [regStatus, setRegStatus] = useState<StatusState>({ type: null, lines: [] });
-  const [verStatus, setVerStatus] = useState<StatusState>({ type: null, lines: [] });
-  const [loading, setLoading] = useState(false);
+  button {
+    width: 100%;
+    background: #cc0000;
+    color: #000;
+    border: none;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 0.25em;
+    padding: 12px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: background 0.15s;
+  }
 
-  const register = useCallback(async () => {
-    const addr = regAddr.trim();
-    if (!isValidAddr(addr)) {
-      setRegStatus({ type: "error", lines: ["// REJECTED — INVALID ADDRESS", "Paste a real ETH/EVM address from your wallet."] });
+  button:hover { background: #ff1a1a; }
+
+  .btn-ghost {
+    background: transparent;
+    color: #cc0000;
+    border: 1px solid #330000;
+  }
+
+  .btn-ghost:hover { background: rgba(204,0,0,0.05); border-color: #660000; }
+
+  .status {
+    display: none;
+    margin-top: 10px;
+    padding: 10px 12px;
+    font-size: 11px;
+    line-height: 1.7;
+    border-left: 2px solid;
+  }
+
+  .status.success { display: block; border-color: #cc0000; color: #996666; background: rgba(204,0,0,0.04); }
+  .status.error   { display: block; border-color: #330000; color: #554444; }
+
+  .status-code { color: #cc0000; font-size: 10px; letter-spacing: 0.15em; display: block; margin-bottom: 3px; }
+
+  .section { margin-bottom: 32px; }
+
+  .divider { height: 1px; background: #110000; margin: 32px 0; }
+
+  .intel { border: 1px solid #1a0000; padding: 16px; }
+  .intel-head { font-size: 9px; letter-spacing: 0.3em; color: #cc0000; text-transform: uppercase; margin-bottom: 8px; }
+  .intel p { font-size: 11px; color: #444; line-height: 1.8; }
+
+  .loading { display: none; height: 1px; background: #1a0000; margin-top: 6px; overflow: hidden; }
+  .loading.active { display: block; }
+  .loading::after { content: ''; display: block; height: 100%; width: 35%; background: #cc0000; animation: slide 0.7s ease-in-out infinite; }
+  @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+
+  .blink { animation: blink 1s step-end infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="site-title">MADJACKET — CLEARANCE REGISTRY — WAVE ONE</div>
+  <div class="section">
+    <label class="field-label" for="walletAddress">Wallet Address (ETH / MegaETH)</label>
+    <input type="text" id="walletAddress" placeholder="0x..." autocomplete="off" spellcheck="false" />
+    <div class="loading" id="loadingBar"></div>
+    <div id="statusBox" class="status"></div>
+    <button onclick="registerWallet()" id="submitBtn">REGISTER FOR CLEARANCE</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section">
+    <label class="field-label" for="verifyAddress">Verify Clearance Status</label>
+    <input type="text" id="verifyAddress" placeholder="0x..." autocomplete="off" spellcheck="false" />
+    <div id="verifyStatus" class="status"></div>
+    <button class="btn-ghost" onclick="verifyWallet()">CHECK STATUS → <span class="blink">_</span></button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="intel">
+    <div class="intel-head">INTEL NOTE</div>
+    <p>This is a drawing. The Cathedral does not reward followers. It rewards those who remember. You read the strip. You know the world. Step forward.<br><br><span style="font-size:9px;color:#333;letter-spacing:0.1em;">MAX 50 SELECTED PER WAVE — ALLOCATION % ANNOUNCED AT DROP.</span></p>
+  </div>
+
+</div>
+<script>
+  const LOCAL_KEY = 'mj_whitelist';
+
+  function getLocalList() { try { return JSON.parse(localStorage.getItem(LOCAL_KEY)||'[]'); } catch(e) { return []; } }
+  function addToLocalList(a) { const l=getLocalList(); if(!l.includes(a)){l.push(a);localStorage.setItem(LOCAL_KEY,JSON.stringify(l));} }
+  function isInLocalList(a) { return getLocalList().includes(a); }
+
+  function keccakHash(bytes) {
+    const RC=[[0x00000001,0],[0x00008082,0],[0x0000808A,0x80000000],[0x80008000,0x80000000],[0x0000808B,0],[0x80000001,0],[0x80008081,0x80000000],[0x00008009,0x80000000],[0x0000008A,0],[0x00000088,0],[0x80008009,0],[0x8000000A,0],[0x8000808B,0],[0x0000008B,0x80000000],[0x00008089,0x80000000],[0x00008003,0x80000000],[0x00008002,0x80000000],[0x00000080,0x80000000],[0x0000800A,0],[0x8000000A,0x80000000],[0x80008081,0x80000000],[0x00008080,0x80000000],[0x80000001,0],[0x80008008,0x80000000]];
+    const ROTC=[1,3,6,10,15,21,28,36,45,55,2,14,27,41,56,8,25,43,62,18,39,61,20,44];
+    const PIL=[10,7,11,17,18,3,5,16,8,21,24,4,15,23,19,13,12,2,20,14,22,9,6,1];
+    const M5=[0,1,2,3,4,0,1,2,3,4];
+    function p5(s,n){return n===0?s:(s<<n)|(s>>>(32-n));}
+    const bC=17,bB=bC*8,len=bytes.length,pL=bB-(len%bB);
+    const padded=new Uint8Array(len+pL);
+    padded.set(bytes);padded[len]=0x01;padded[padded.length-1]|=0x80;
+    const s=Array.from({length:25},()=>[0,0]);
+    function xl(i,lo,hi){s[i][0]^=lo;s[i][1]^=hi;}
+    function kf(){
+      for(let n=0;n<24;n++){
+        const C=Array.from({length:5},(_,x)=>[s[x][0]^s[x+5][0]^s[x+10][0]^s[x+15][0]^s[x+20][0],s[x][1]^s[x+5][1]^s[x+10][1]^s[x+15][1]^s[x+20][1]]);
+        for(let x=0;x<5;x++){const r=M5[x+1];const dl=C[M5[x+4]][0]^(p5(C[r][0],1)|(C[r][1]>>>31));const dh=C[M5[x+4]][1]^(p5(C[r][1],1)|(C[r][0]>>>31));for(let y=0;y<5;y++)xl(x+5*y,dl,dh);}
+        let[lo,hi]=[s[1][0],s[1][1]];
+        for(let t=0;t<24;t++){const i=PIL[t],r=ROTC[t];const[sl,sh]=[s[i][0],s[i][1]];s[i][0]=r<32?(p5(lo,r)|(hi>>>(32-r))):(p5(hi,r-32)|(lo>>>(64-r)));s[i][1]=r<32?(p5(hi,r)|(lo>>>(32-r))):(p5(lo,r-32)|(hi>>>(64-r)));[lo,hi]=[sl,sh];}
+        for(let y=0;y<5;y++){const row=[0,1,2,3,4].map(x=>[s[x+5*y][0],s[x+5*y][1]]);for(let x=0;x<5;x++){s[x+5*y][0]=row[x][0]^(~row[M5[x+1]][0]&row[M5[x+2]][0]);s[x+5*y][1]=row[x][1]^(~row[M5[x+1]][1]&row[M5[x+2]][1]);}}
+        xl(0,RC[n][0],RC[n][1]);
+      }
+    }
+    for(let i=0;i<padded.length;i+=bB){
+      for(let j=0;j<bC;j++){const o=i+j*8;const lo=padded[o]|(padded[o+1]<<8)|(padded[o+2]<<16)|(padded[o+3]<<24);const hi=padded[o+4]|(padded[o+5]<<8)|(padded[o+6]<<16)|(padded[o+7]<<24);xl(j,lo>>>0,hi>>>0);}
+      kf();
+    }
+    let hex='';
+    for(let i=0;i<4;i++){for(let b=0;b<4;b++)hex+=((s[i][0]>>>(b*8))&0xff).toString(16).padStart(2,'0');for(let b=0;b<4;b++)hex+=((s[i][1]>>>(b*8))&0xff).toString(16).padStart(2,'0');}
+    return hex;
+  }
+
+  async function isValid(addr) {
+    return /^0x[0-9a-fA-F]{40}$/.test(addr);
+  }
+
+  function showStatus(id,type,lines){
+    const b=document.getElementById(id);
+    b.className=`status ${type}`;
+    b.innerHTML=lines.map((l,i)=>i===0?`<span class="status-code">${l}</span>`:l).join('<br>');
+  }
+
+  async function registerWallet() {
+    const addr=document.getElementById('walletAddress').value.trim();
+    if(!await isValid(addr)){
+      showStatus('statusBox','error',['// REJECTED — INVALID ADDRESS','Paste a real ETH/EVM address from your wallet.']);
       return;
     }
-    const norm = addr.toLowerCase();
-    if (inList(norm)) {
-      setRegStatus({ type: "success", lines: ["// ALREADY REGISTERED", `${addr.slice(0,6)}...${addr.slice(-4)} is already on the list.`] });
+    const norm=addr.toLowerCase();
+    if(isInLocalList(norm)){
+      showStatus('statusBox','success',['// ALREADY REGISTERED',`${addr.slice(0,6)}...${addr.slice(-4)} is already on the list.`]);
       return;
     }
-    setLoading(true);
-    try {
-      const fd = new FormData();
-      fd.append(ENTRY, addr);
-      await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: fd });
-    } catch (_) {}
-    saveAddr(norm);
-    setLoading(false);
-    setRegStatus({
-      type: "success",
-      lines: [
-        "// CLEARANCE GRANTED",
-        `${addr.slice(0,6)}...${addr.slice(-4)} filed.`,
-        "Watch @_madjacket for mint details.",
-        `Timestamp: ${new Date().toLocaleString()}`,
-      ],
-    });
-    setRegAddr("");
-  }, [regAddr]);
+    const btn=document.getElementById('submitBtn');
+    btn.textContent='TRANSMITTING...'; btn.disabled=true;
+    document.getElementById('loadingBar').classList.add('active');
+    if(SCRIPT_URL!=='https://docs.google.com/forms/d/e/1FAIpQLSdmr6WxzoyhKIp7Ytb67ugGv9cA2e8UFnkUn3CoCz6mvKXk_A/formResponse'){
+      try{ await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify({address:addr,timestamp:new Date().toISOString()})}); }catch(e){}
+    }
+    addToLocalList(norm);
+    document.getElementById('loadingBar').classList.remove('active');
+    btn.textContent='REGISTER FOR CLEARANCE'; btn.disabled=false;
+    showStatus('statusBox','success',['// CLEARANCE GRANTED',`${addr.slice(0,6)}...${addr.slice(-4)} filed.`,'Watch @_madjacket for mint details.',`Timestamp: ${new Date().toLocaleString()}`]);
+    document.getElementById('walletAddress').value='';
+  }
 
-  const verify = useCallback(() => {
-    const addr = verAddr.trim();
-    if (!isValidAddr(addr)) {
-      setVerStatus({ type: "error", lines: ["// ERROR", "Not a valid ETH/EVM address."] });
+  async function verifyWallet() {
+    const addr=document.getElementById('verifyAddress').value.trim();
+    if(!await isValid(addr)){
+      showStatus('verifyStatus','error',['// ERROR','Not a valid ETH/EVM address.']);
       return;
     }
-    const norm = addr.toLowerCase();
-    if (inList(norm)) {
-      setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`, "WAVE ONE — MADJACKET: AWAKENING"] });
+    const norm=addr.toLowerCase();
+    if(isInLocalList(norm)){
+      showStatus('verifyStatus','success',['// CONFIRMED — CLEARANCE ACTIVE',`${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`,'WAVE ONE — MADJACKET: AWAKENING']);
     } else {
-      setVerStatus({ type: "error", lines: ["// NOT FOUND", `${addr.slice(0,6)}...${addr.slice(-4)} is not on the list.`, "Register above."] });
+      showStatus('verifyStatus','error',['// NOT FOUND',`${addr.slice(0,6)}...${addr.slice(-4)} is not on the list.`,'Register above.']);
     }
-  }, [verAddr]);
+  }
 
-  return (
-    <div className="wl-page">
-      {/* hex lattice bg */}
-      <div className="wl-hex" aria-hidden="true" />
-
-      <div className="wl-container">
-        <div className="wl-title">MADJACKET — CLEARANCE REGISTRY — WAVE ONE</div>
-
-        {/* REGISTER */}
-        <div className="wl-section">
-          <label className="wl-label" htmlFor="walletAddress">Wallet Address (ETH / MegaETH)</label>
-          <input
-            id="walletAddress"
-            className="wl-input"
-            type="text"
-            placeholder="0x..."
-            autoComplete="off"
-            spellCheck={false}
-            value={regAddr}
-            onChange={e => setRegAddr(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && register()}
-          />
-          {loading && <div className="wl-loading"><div className="wl-loading-bar" /></div>}
-          {regStatus.type && (
-            <div className={`wl-status wl-status--${regStatus.type}`}>
-              <span className="wl-status-code">{regStatus.lines[0]}</span>
-              {regStatus.lines.slice(1).map((l, i) => <span key={i}>{l}</span>)}
-            </div>
-          )}
-          <button className="wl-btn" onClick={register} disabled={loading}>
-            {loading ? "TRANSMITTING..." : "REGISTER FOR CLEARANCE"}
-          </button>
-        </div>
-
-        <div className="wl-divider" />
-
-        {/* VERIFY */}
-        <div className="wl-section">
-          <label className="wl-label" htmlFor="verifyAddress">Verify Clearance Status</label>
-          <input
-            id="verifyAddress"
-            className="wl-input"
-            type="text"
-            placeholder="0x..."
-            autoComplete="off"
-            spellCheck={false}
-            value={verAddr}
-            onChange={e => setVerAddr(e.target.value)}
-            onKeyDown={e => e.key === "Enter" && verify()}
-          />
-          {verStatus.type && (
-            <div className={`wl-status wl-status--${verStatus.type}`}>
-              <span className="wl-status-code">{verStatus.lines[0]}</span>
-              {verStatus.lines.slice(1).map((l, i) => <span key={i}>{l}</span>)}
-            </div>
-          )}
-          <button className="wl-btn wl-btn--ghost" onClick={verify}>
-            CHECK STATUS → <span className="wl-blink">_</span>
-          </button>
-        </div>
-
-        <div className="wl-divider" />
-
-        {/* INTEL NOTE */}
-        <div className="wl-intel">
-          <div className="wl-intel-head">INTEL NOTE</div>
-          <p>This is not a raffle. You are not entering a giveaway. You read the strip. You know the world. That is the only credential the Cathedral recognizes at this time.</p>
-        </div>
-      </div>
-    </div>
-  );
-}
+  document.getElementById('walletAddress').addEventListener('keydown',e=>{if(e.key==='Enter')registerWallet();});
+  document.getElementById('verifyAddress').addEventListener('keydown',e=>{if(e.key==='Enter')verifyWallet();});
+</script>
+</body>
+</html>

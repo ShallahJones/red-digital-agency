@@ -9,6 +9,7 @@ import Home from "./pages/Home";
 import Screening from "./pages/Screening";
 import Dataleak from "./pages/Dataleak";
 import RedPages from "./pages/RedPages";
+import Whitelist from "./pages/Whitelist";
 import "./mobile.css";
 
 function CustomCursor() {
@@ -95,6 +96,7 @@ export default function App() {
           <Route path="/screening" element={<Screening />} />
           <Route path="/dataleak" element={<Dataleak />} />
           <Route path="/red-pages" element={<RedPages />} />
+          <Route path="/whitelist" element={<Whitelist />} />
         </Routes>
       </ModalProvider>
     </BrowserRouter>

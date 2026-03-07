@@ -2805,13 +2805,40 @@ footer {
   gap: 16px;
 }
 
-.rp-footer-quote {
+.rp-footer-whitelist-btn {
+  display: inline-block;
   font-family: "Bebas Neue", system-ui, sans-serif;
-  font-size: clamp(18px, 3vw, 26px);
-  letter-spacing: .12em;
-  color: rgba(240,240,240,.5);
+  font-size: clamp(20px, 3.5vw, 32px);
+  letter-spacing: .25em;
+  color: #000;
+  background: var(--rp-red);
   text-align: center;
-  line-height: 1.4;
+  text-decoration: none;
+  padding: 16px 48px;
+  border: 2px solid var(--rp-red);
+  transition: all .3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.rp-footer-whitelist-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.1);
+  transform: translateX(-100%);
+  transition: transform .3s ease;
+}
+
+.rp-footer-whitelist-btn:hover {
+  background: transparent;
+  color: var(--rp-red);
+  box-shadow: 0 0 20px rgba(204,0,0,.4);
+}
+
+.rp-footer-whitelist-btn:hover::before {
+  transform: translateX(100%);
 }
 
 .rp-footer-copy {
@@ -2898,3 +2925,120 @@ footer {
     font-size: 9px;
   }
 }
+
+/* ===== WHITELIST PAGE ===== */
+.wl-page {
+  min-height: 100vh;
+  position: relative;
+  padding-top: 80px;
+}
+
+.wl-hex {
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='100'%3E%3Cpath d='M28 2 L54 17 L54 47 L28 62 L2 47 L2 17 Z' fill='none' stroke='%23220000' stroke-width='1'/%3E%3Cpath d='M28 62 L54 77 L54 100' fill='none' stroke='%23220000' stroke-width='1'/%3E%3Cpath d='M28 62 L2 77 L2 100' fill='none' stroke='%23220000' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 56px 100px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.8;
+}
+
+.wl-container {
+  position: relative;
+  z-index: 1;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+}
+
+.wl-title {
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  color: var(--red);
+  text-transform: uppercase;
+  margin-bottom: 48px;
+  border-left: 2px solid var(--red);
+  padding-left: 10px;
+}
+
+.wl-label {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  color: #550000;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.wl-input {
+  width: 100%;
+  background: #000;
+  border: 1px solid #220000;
+  border-bottom: 1px solid var(--red);
+  color: var(--fg);
+  font-family: inherit;
+  font-size: 13px;
+  padding: 10px 12px;
+  outline: none;
+  margin-bottom: 10px;
+  transition: border-color 0.2s;
+}
+
+.wl-input:focus { border-color: #550000; border-bottom-color: #ff2200; }
+.wl-input::placeholder { color: #2a2a2a; font-size: 11px; }
+
+.wl-btn {
+  width: 100%;
+  background: var(--red);
+  color: #000;
+  border: none;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.25em;
+  padding: 12px;
+  cursor: pointer;
+  text-transform: uppercase;
+  transition: background 0.15s;
+}
+
+.wl-btn:hover { background: #ff1a1a; }
+.wl-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.wl-btn--ghost {
+  background: transparent;
+  color: var(--red);
+  border: 1px solid #330000;
+}
+
+.wl-btn--ghost:hover { background: rgba(255,0,60,0.05); border-color: #660000; }
+
+.wl-status {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 10px 12px;
+  font-size: 11px;
+  line-height: 1.7;
+  border-left: 2px solid;
+}
+
+.wl-status--success { border-color: var(--red); color: #996666; background: rgba(255,0,60,0.04); }
+.wl-status--error   { border-color: #330000; color: #554444; }
+.wl-status-code     { color: var(--red); font-size: 10px; letter-spacing: 0.15em; }
+
+.wl-section { margin-bottom: 32px; }
+.wl-divider { height: 1px; background: #110000; margin: 32px 0; }
+
+.wl-intel { border: 1px solid #1a0000; padding: 16px; }
+.wl-intel-head { font-size: 9px; letter-spacing: 0.3em; color: var(--red); text-transform: uppercase; margin-bottom: 8px; }
+.wl-intel p { font-size: 11px; color: #444; line-height: 1.8; }
+
+.wl-loading { height: 1px; background: #1a0000; margin-bottom: 8px; overflow: hidden; }
+.wl-loading-bar { height: 100%; width: 35%; background: var(--red); animation: wl-slide 0.7s ease-in-out infinite; }
+@keyframes wl-slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(400%)} }
+
+.wl-blink { animation: wl-blink 1s step-end infinite; }
+@keyframes wl-blink { 0%,100%{opacity:1} 50%{opacity:0} }

@@ -23,6 +23,7 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
   );
 }
 
+
 function DataSweepLine() {
   return <div className="rp-sweep-line" aria-hidden="true" />;
 }
@@ -334,11 +335,9 @@ export default function RedPages() {
 
       <footer className="rp-footer">
         <div className="rp-footer-inner">
-          <div className="rp-footer-quote">
-            SYSTEMS DON'T CURATE ART.
-            <br />
-            THEY REWARD BEHAVIOR.
-          </div>
+          <Link to="/whitelist" className="rp-footer-whitelist-btn">
+            [ REGISTER FOR CLEARANCE ]
+          </Link>
           <div className="rp-footer-copy">&#169; MADJACKET</div>
           <div className="rp-footer-socials">
             <a href="https://x.com/_madjacket" target="_blank" rel="noopener noreferrer" aria-label="X">

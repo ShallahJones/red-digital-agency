@@ -412,7 +412,10 @@
   .rp-archive-tile-title { font-size: 9px; }
 
   .rp-footer { padding: 32px 16px 24px; }
-  .rp-footer-quote { font-size: clamp(15px, 4vw, 22px); }
+  .rp-footer-whitelist-btn {
+    font-size: clamp(18px, 5vw, 28px);
+    padding: 12px 32px;
+  }
 
   /* ── Lightbox (both) ── */
   .lb-backdrop { padding: 12px; }

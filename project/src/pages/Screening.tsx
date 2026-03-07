@@ -9,6 +9,7 @@ function getGlitchyQuestionMarks(count: number): string {
   return Array(count).fill(0).map(() => GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]).join('');
 }
 
+
 export default function Screening() {
   const [time, setTime] = useState({ d: "??", h: "??", m: "??", s: "??", live: false });
   const [glitchTick, setGlitchTick] = useState(0);

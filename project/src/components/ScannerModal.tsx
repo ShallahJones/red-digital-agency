@@ -429,7 +429,18 @@ export default function ScannerModal() {
     frozenRef.current = true;
     if (camRafRef.current) { cancelAnimationFrame(camRafRef.current); camRafRef.current = null; }
     if (overlayRafRef.current) { cancelAnimationFrame(overlayRafRef.current); overlayRafRef.current = null; }
-    frozenDataUrlRef.current = canvasRef.current.toDataURL("image/png");
+    // Composite camera feed + harekin overlay into a single snapshot
+    const W = canvasRef.current.width, H = canvasRef.current.height;
+    const composite = document.createElement("canvas");
+    composite.width = W; composite.height = H;
+    const compCtx = composite.getContext("2d");
+    if (compCtx) {
+      compCtx.drawImage(canvasRef.current, 0, 0);          // red-filtered camera
+      if (overlayRef.current) {
+        compCtx.drawImage(overlayRef.current, 0, 0);       // harekin mask on top
+      }
+    }
+    frozenDataUrlRef.current = composite.toDataURL("image/png");
     const locked: Attrs = {
       align: liveAttrs.align,
       threat: currentItem?.threat || liveAttrs.threat,

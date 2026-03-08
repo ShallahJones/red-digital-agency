@@ -151,11 +151,7 @@ export default function Home() {
           <div className="hero-sub">
             A red cathedral feed. A live archive.<br></br> A leak you were not supposed to see.
           </div>
-         <!--- <div className="cta">
-           <a className="btn primary" href="https://opensea.io/collection/madjacket-arrival/overview" target="_blank" rel="noreferrer">PREVIEW COLLECTION</a>
-            <a className="btn" href="/screening">SCREENING</a>
-            <a className="btn" href="/dataleak">OPEN TERMINAL</a>
-          </div>-->
+
         </div>
       </section>
 

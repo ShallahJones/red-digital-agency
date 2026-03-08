@@ -264,10 +264,7 @@ export default function Home() {
           <p className="me-body">
             Powered by <span className="me-accent">MegaETH</span>.
           </p>
-          <div className="me-btns">
-            <a className="btn primary" href="https://kreate.art/collection/MadjacketDataLeak" target="_blank" rel="noreferrer">KREATE</a>
-            <a className="btn" href="https://opensea.io/collection/madjacket-arrival/overview" target="_blank" rel="noreferrer">OPENSEA</a>
-          </div>
+
         </div>
       </section>
 

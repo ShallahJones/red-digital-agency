@@ -221,12 +221,12 @@ export default function Home() {
 
       <div className="rule" />
 
-      <section className="harekins-section">
+      <section className="harekin-section">
         <GlitchVisitors />
         <div className="wrap">
           <div className="harekin-tag">◈ FACTION FILE — UNREGISTERED</div>
           <h2 className="harekin-title">
-            THE <span className="harekin-accent">HAREKINS</span>
+            THE <span className="harekin-accent">harekin</span>
             <br />ARE ALREADY INSIDE.
           </h2>
           <div className="harekin-body">
@@ -234,10 +234,10 @@ export default function Home() {
               They don't appear in any Signal registry. They leave no RSI trace. No compliance profile. No location data.
             </p>
             <p>
-              The <strong>Harekins</strong> are a rogue faction who slipped through the cracks before The Signal reached full coverage — urban ghosts who move faster than the city's cognitive grid can track. They took the rabbit as their emblem. Not for cuteness. For what it means: <span className="harekin-cyan">quick, elusive, impossible to contain.</span>
+              The <strong>harekin</strong> are a rogue faction who slipped through the cracks before The Signal reached full coverage — urban ghosts who move faster than the city's cognitive grid can track. They took the rabbit as their emblem. Not for cuteness. For what it means: <span className="harekin-cyan">quick, elusive, impossible to contain.</span>
             </p>
             <p>
-              Where Madjacket enforces and PsiCare heals, the Harekins <strong>vanish</strong>. They are freedom as a survival tactic. Rebellion encoded in movement. The only faction The Signal cannot model because they refuse to hold still long enough to be read.
+              Where Madjacket enforces and PsiCare heals, the harekin <strong>vanish</strong>. They are freedom as a survival tactic. Rebellion encoded in movement. The only faction The Signal cannot model because they refuse to hold still long enough to be read.
             </p>
             <p>
               The city that can't catch you can't own you. <span className="harekin-cyan">They move at MegaETH speed — and that is the only sovereignty that matters.</span>

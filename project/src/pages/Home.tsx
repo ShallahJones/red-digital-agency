@@ -88,7 +88,7 @@ const PSICARE_ROWS = [
 
 const HAREKIN_TRAITS = [
   "EVASION", "NO SIGNAL TRACE", "URBAN FOLK", "RABBIT AUGMENTS",
-  "EMPATHIC RESONANCE", "FREEDOM PROTOCOL", "MEGAETH NATIVE", "SPEED = SOVEREIGNTY",
+  "EMPATHIC RESONANCE", "FREEDOM PROTOCOL", "CARDANO NATIVE", "SPEED = SOVEREIGNTY",
   "GENE EDITING",
 ];
 
@@ -240,7 +240,7 @@ export default function Home() {
               Where Madjacket enforces and PsiCare heals, the harekin <strong>vanish</strong>. They are freedom as a survival tactic. Rebellion encoded in movement. The only faction The Signal cannot model because they refuse to hold still long enough to be read.
             </p>
             <p>
-              The city that can't catch you can't own you. <span className="harekin-cyan">They move at MegaETH speed — and that is the only sovereignty that matters.</span>
+              The city that can't catch you can't own you. <span className="harekin-cyan">They move at high speed — and that is the only sovereignty that matters.</span>
             </p>
           </div>
           <div className="harekin-traits">
@@ -256,13 +256,13 @@ export default function Home() {
 
       <section className="megaeth-section">
         <div className="wrap">
-          <div className="me-eyebrow">BUILT ON · MEGAETH</div>
+          <div className="me-eyebrow">BUILT ON · MIDNIGHT</div>
           <h2 className="me-title">THIS IS THE GATEWAY.</h2>
           <p className="me-body">
-            Not just collectors. Not just whales. <strong>Everybody into the gateway.</strong> Plebs, builders, runners — the whole bloc. MegaETH is speed. And speed is what gets you out.
+            Not just collectors. Not just whales. <strong>Everybody into the gateway.</strong> Plebs, builders, runners — the whole bloc.
           </p>
           <p className="me-body">
-            Powered by <span className="me-accent">MegaETH</span>.
+            Powered by <span className="me-accent">MIDNIGHT</span>.
           </p>
 
         </div>

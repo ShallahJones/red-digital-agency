@@ -256,13 +256,13 @@ export default function Home() {
 
       <section className="megaeth-section">
         <div className="wrap">
-          <div className="me-eyebrow">BUILT ON · MIDNIGHT</div>
+          <div className="me-eyebrow">BUILT ON · ROBINHOOD</div>
           <h2 className="me-title">THIS IS THE GATEWAY.</h2>
           <p className="me-body">
             Not just collectors. Not just whales. <strong>Everybody into the gateway.</strong> Plebs, builders, runners — the whole bloc.
           </p>
           <p className="me-body">
-            Powered by <span className="me-accent">MIDNIGHT</span>.
+            Powered by <span className="me-accent">ROBINHOOD</span>.
           </p>
 
         </div>

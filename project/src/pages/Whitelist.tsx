@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { supabase } from "../lib/supabase";
+import { isValidChecksum } from "../lib/keccak256";
 
 
 const LOCAL_KEY = "mj_whitelist";
@@ -11,7 +12,9 @@ function saveAddr(a: string) {
   const l = getList(); if (!l.includes(a)) { l.push(a); localStorage.setItem(LOCAL_KEY, JSON.stringify(l)); }
 }
 function inList(a: string) { return getList().includes(a); }
-function isValidAddr(a: string) { return /^0x[0-9a-fA-F]{40}$/.test(a); }
+function isValidAddr(a: string) {
+  return /^0x[0-9a-fA-F]{40}$/.test(a) && isValidChecksum(a);
+}
 
 type StatusState = { type: "success" | "error" | null; lines: string[] };
 
@@ -25,7 +28,7 @@ export default function Whitelist() {
   const register = useCallback(async () => {
     const addr = regAddr.trim();
     if (!isValidAddr(addr)) {
-      setRegStatus({ type: "error", lines: ["// REJECTED — INVALID ADDRESS", "Paste a real ETH/EVM address from your wallet."] });
+      setRegStatus({ type: "error", lines: ["// REJECTED — INVALID ADDRESS", "Not a valid ETH address, or the checksum doesn't match. Copy it straight from your wallet."] });
       return;
     }
     const norm = addr.toLowerCase();
@@ -156,7 +159,6 @@ export default function Whitelist() {
         <div className="wl-intel">
           <div className="wl-intel-head">INTEL NOTE</div>
           <p>This is a drawing. The Red Cathedral rewards those who remember. You read the lore. You know the world. Step forward.</p>
-          <p style={{marginTop: '10px', fontSize: '11px', color: '#333'}}>Max 50 selected per wave. Percentage of total mint allocation announced at drop.</p>
         </div>
       </div>
     </div>

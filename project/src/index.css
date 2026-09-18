@@ -3082,6 +3082,24 @@ footer {
   transition: width 0.6s ease-out;
 }
 
+.wl-counter--over .wl-counter-row {
+  color: #ff5533;
+}
+
+.wl-counter--over .wl-counter-fill {
+  background: linear-gradient(90deg, var(--red), #ff7a1a);
+  animation: wl-counter-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes wl-counter-pulse {
+  0%, 100% { filter: brightness(1); }
+  50%      { filter: brightness(1.35); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-counter--over .wl-counter-fill { animation: none; }
+}
+
 .wl-label {
   font-size: 11px;
   letter-spacing: 0.22em;

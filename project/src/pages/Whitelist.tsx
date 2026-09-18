@@ -24,7 +24,7 @@ export default function Whitelist() {
   const [regStatus, setRegStatus] = useState<StatusState>({ type: null, lines: [] });
   const [verStatus, setVerStatus] = useState<StatusState>({ type: null, lines: [] });
   const [loading, setLoading] = useState(false);
-  const [counter, setCounter] = useState<{ count: number; cap: number } | null>(null);
+  const [counter, setCounter] = useState<{ count: number; cap: number; overflow: number } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -32,7 +32,7 @@ export default function Whitelist() {
       .then((r) => r.json())
       .then((data) => {
         if (!cancelled && typeof data.count === "number" && typeof data.cap === "number") {
-          setCounter({ count: data.count, cap: data.cap });
+          setCounter({ count: data.count, cap: data.cap, overflow: typeof data.overflow === "number" ? data.overflow : 0 });
         }
       })
       .catch(() => {});
@@ -61,8 +61,15 @@ export default function Whitelist() {
     const { error } = await supabase.from("robinhood_whitelist").insert({ wallet_address: norm });
 
     if (error && error.message?.includes("WHITELIST_FULL")) {
+      // Real list is full at the cap — no clearance granted. Log the attempt to the
+      // separate, uncapped overflow table purely so the site can display how many
+      // extra wallets tried (hype counter). Best-effort; failure here doesn't matter.
+      supabase.from("robinhood_whitelist_overflow").insert({ wallet_address: norm }).then(() => {});
+      setCounter((c) => (c ? { ...c, overflow: c.overflow + 1 } : c));
       setLoading(false);
-      setRegStatus({ type: "error", lines: ["// CLEARANCE REGISTRY FULL", "All 199 spots for this wave are filled. Watch @_madjacket for the next drop."] });
+      saveAddr(norm);
+      setRegStatus({ type: "success", lines: ["// SIGNAL LOGGED — LATE ARRIVAL", `${addr.slice(0,6)}...${addr.slice(-4)} filed.`, "The Cathedral's first 199 seats are already claimed. Your signal was received all the same.", "Watch @_madjacket."] });
+      setRegAddr("");
       return;
     }
 
@@ -121,20 +128,25 @@ export default function Whitelist() {
       <div className="wl-container">
         <div className="wl-title">MADJACKET — ROBINHOOD COLLECTION — CLEARANCE REGISTRY</div>
 
-        {counter && (
-          <div className="wl-counter">
-            <div className="wl-counter-row">
-              <span>{String(counter.count).padStart(3, "0")} / {counter.cap} CLAIMED</span>
-              <span>{Math.max(counter.cap - counter.count, 0)} REMAINING</span>
+        {counter && (() => {
+          const total = counter.count + counter.overflow;
+          const pct = Math.round((total / counter.cap) * 100);
+          const overallocated = total > counter.cap;
+          return (
+            <div className={`wl-counter${overallocated ? " wl-counter--over" : ""}`}>
+              <div className="wl-counter-row">
+                <span>{overallocated ? `${total} / ${counter.cap} CLAIMED` : `${counter.count} / ${counter.cap} CLAIMED`}</span>
+                <span>{overallocated ? `${pct}% ALLOCATED` : `${counter.cap - counter.count} REMAINING`}</span>
+              </div>
+              <div className="wl-counter-track">
+                <div
+                  className="wl-counter-fill"
+                  style={{ width: `${Math.min(pct, 100)}%` }}
+                />
+              </div>
             </div>
-            <div className="wl-counter-track">
-              <div
-                className="wl-counter-fill"
-                style={{ width: `${Math.min((counter.count / counter.cap) * 100, 100)}%` }}
-              />
-            </div>
-          </div>
-        )}
+          );
+        })()}
 
         {/* REGISTER */}
         <div className="wl-section">

@@ -74,8 +74,14 @@ export default function Whitelist() {
 
   return (
     <div className="wl-page">
-      {/* hex lattice bg */}
-      <div className="wl-hex" aria-hidden="true" />
+      {/* layered kaleidoscope lattice bg */}
+      <div className="wl-bg" aria-hidden="true">
+        <div className="wl-kaleido--b" />
+        <div className="wl-kaleido" />
+        <div className="wl-lattice wl-lattice--b" />
+        <div className="wl-lattice" />
+        <div className="wl-vignette" />
+      </div>
 
       <div className="wl-container">
         <div className="wl-title">MADJACKET — ROBINHOOD COLLECTION — CLEARANCE REGISTRY</div>

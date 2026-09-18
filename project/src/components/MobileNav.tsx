@@ -35,7 +35,7 @@ export default function MobileNav() {
       <div className={`mob-drawer${open ? " open" : ""}`} aria-hidden={!open}>
         <div className="mob-drawer-inner">
           <div className="mob-drawer-brand">MAD<em>JACKET</em></div>
-          <div className="mob-drawer-tag">ARRIVAL · MEGAETH</div>
+          <div className="mob-drawer-tag">ARRIVAL · ROBINHOOD</div>
           <nav className="mob-drawer-links">
             <NavLink to="/" end className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>HOME</NavLink>
             <NavLink to="/screening" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>SCREENING</NavLink>

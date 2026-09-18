@@ -283,8 +283,8 @@
     width: clamp(120px, 22vw, 200px);
   }
 
-  /* ── MegaETH Section ── */
-  .megaeth-section { padding: 64px 0 48px; }
+  /* ── Robinhood Section ── */
+  .robinhood-section { padding: 64px 0 48px; }
   .me-title { font-size: clamp(44px, 12vw, 80px); }
   .me-body { font-size: 12px; letter-spacing: .14em; }
   .me-btns { flex-direction: column; align-items: flex-start; gap: 10px; }

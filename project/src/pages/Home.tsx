@@ -254,7 +254,7 @@ export default function Home() {
 
       <div className="rule" />
 
-      <section className="megaeth-section">
+      <section className="robinhood-section">
         <div className="wrap">
           <div className="me-eyebrow">BUILT ON · ROBINHOOD</div>
           <h2 className="me-title">THIS IS THE GATEWAY.</h2>

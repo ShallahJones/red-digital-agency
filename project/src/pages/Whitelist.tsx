@@ -66,7 +66,7 @@ export default function Whitelist() {
     }
     const norm = addr.toLowerCase();
     if (inList(norm)) {
-      setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`, "WAVE ONE — MADJACKET: AWAKENING"] });
+      setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`, "MADJACKET × ROBINHOOD — CLEARANCE ACTIVE"] });
     } else {
       setVerStatus({ type: "error", lines: ["// NOT FOUND", `${addr.slice(0,6)}...${addr.slice(-4)} is not on the list.`, "Register above."] });
     }
@@ -78,11 +78,11 @@ export default function Whitelist() {
       <div className="wl-hex" aria-hidden="true" />
 
       <div className="wl-container">
-        <div className="wl-title">MADJACKET — CLEARANCE REGISTRY — WAVE ONE</div>
+        <div className="wl-title">MADJACKET — ROBINHOOD COLLECTION — CLEARANCE REGISTRY</div>
 
         {/* REGISTER */}
         <div className="wl-section">
-          <label className="wl-label" htmlFor="walletAddress">Wallet Address (ETH / MegaETH)</label>
+          <label className="wl-label" htmlFor="walletAddress">Wallet Address (ETH)</label>
           <input
             id="walletAddress"
             className="wl-input"
@@ -138,8 +138,8 @@ export default function Whitelist() {
         {/* INTEL NOTE */}
         <div className="wl-intel">
           <div className="wl-intel-head">INTEL NOTE</div>
-          <p>This is a drawing. The Cathedral does not reward followers. It rewards those who remember. You read the strip. You know the world. Step forward.</p>
-          <p style={{marginTop: '10px', fontSize: '10px', color: '#333'}}>Max 50 selected per wave. Percentage of total mint allocation announced at drop.</p>
+          <p>This is a drawing. The Red Cathedral rewards those who remember. You read the lore. You know the world. Step forward.</p>
+          <p style={{marginTop: '10px', fontSize: '11px', color: '#333'}}>Max 50 selected per wave. Percentage of total mint allocation announced at drop.</p>
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
-import type { Handler } from "@netlify/functions";
+import type { VercelRequest, VercelResponse } from "@vercel/node";
 import { createClient } from "@supabase/supabase-js";
 
-// Set these in Netlify: Site configuration -> Environment variables.
+// Set these in Vercel: Project Settings -> Environment Variables.
 // SUPABASE_URL: same project URL as VITE_SUPABASE_URL
-// SUPABASE_SERVICE_ROLE_KEY: the *service_role* key (Project Settings -> API). Never expose this to the browser.
+// SUPABASE_SERVICE_ROLE_KEY: the *service_role* key (Supabase Project Settings -> API). Never expose this to the browser.
 // EXPORT_PASSPHRASE: whatever passphrase you want to gate the export with.
 
 function toCsv(addresses: string[]): string {
@@ -12,26 +12,29 @@ function toCsv(addresses: string[]): string {
   return [header, ...rows].join("\r\n") + "\r\n";
 }
 
-export const handler: Handler = async (event) => {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   const passphrase =
-    event.queryStringParameters?.passphrase ||
-    event.headers["x-export-passphrase"];
+    (req.query.passphrase as string | undefined) ||
+    (req.headers["x-export-passphrase"] as string | undefined);
 
   const expected = process.env.EXPORT_PASSPHRASE;
 
   if (!expected) {
-    return { statusCode: 500, body: "EXPORT_PASSPHRASE is not configured on the server." };
+    res.status(500).send("EXPORT_PASSPHRASE is not configured on the server.");
+    return;
   }
 
   if (!passphrase || passphrase !== expected) {
-    return { statusCode: 401, body: "Unauthorized" };
+    res.status(401).send("Unauthorized");
+    return;
   }
 
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
   if (!url || !serviceKey) {
-    return { statusCode: 500, body: "Supabase server env vars are not configured." };
+    res.status(500).send("Supabase server env vars are not configured.");
+    return;
   }
 
   const supabase = createClient(url, serviceKey);
@@ -42,18 +45,14 @@ export const handler: Handler = async (event) => {
     .order("created_at", { ascending: true });
 
   if (error) {
-    return { statusCode: 500, body: `Failed to fetch whitelist: ${error.message}` };
+    res.status(500).send(`Failed to fetch whitelist: ${error.message}`);
+    return;
   }
 
   const addresses = (data ?? []).map((row) => row.wallet_address as string);
   const csv = toCsv(addresses);
 
-  return {
-    statusCode: 200,
-    headers: {
-      "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="robinhood-opensea-allowlist.csv"`,
-    },
-    body: csv,
-  };
-};
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="robinhood-opensea-allowlist.csv"');
+  res.status(200).send(csv);
+}

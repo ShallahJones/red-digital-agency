@@ -689,7 +689,7 @@ export default function ScannerModal() {
 
           <div className="id-barcode-row">
             <canvas ref={barcodeRef} className="id-barcode" width={1200} height={44} />
-            <div className="id-barcode-label">RSI-ENCODED · MEGAETH · MADJACKET ARRIVAL</div>
+            <div className="id-barcode-label">RSI-ENCODED · ROBINHOOD · MADJACKET ARRIVAL</div>
           </div>
         </div>
       </div>

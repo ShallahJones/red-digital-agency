@@ -7,7 +7,7 @@ export default function Nav() {
   return (
     <nav className="site-nav">
       <Link className="brand" to="/">MAD<em>JACKET</em></Link>
-      <span className="tag">ARRIVAL · MEGAETH</span>
+      <span className="tag">ARRIVAL · ROBINHOOD</span>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => isActive ? "active-nav" : ""}>HOME</NavLink>
         <NavLink to="/screening" className={({ isActive }) => isActive ? "active-nav" : ""}>SCREENING</NavLink>

@@ -1,12 +1,7 @@
 import { useState, useCallback } from "react";
+import { supabase } from "../lib/supabase";
 
 
-
-
-
-const FORM_URL =
-  "https://docs.google.com/forms/d/e/1FAIpQLSdmr6WxzoyhKIp7Ytb67ugGv9cA2e8UFnkUn3CoCz6mvKXk_A/formResponse";
-const ENTRY = "entry.718361902";
 const LOCAL_KEY = "mj_whitelist";
 
 function getList(): string[] {
@@ -39,22 +34,38 @@ export default function Whitelist() {
       return;
     }
     setLoading(true);
-    try {
-      const fd = new FormData();
-      fd.append(ENTRY, addr);
-      await fetch(FORM_URL, { method: "POST", mode: "no-cors", body: fd });
-    } catch (_) {}
+
+    if (!supabase) {
+      setLoading(false);
+      setRegStatus({ type: "error", lines: ["// OFFLINE", "Registration is temporarily unavailable. Try again shortly."] });
+      return;
+    }
+
+    const { error } = await supabase.from("robinhood_whitelist").insert({ wallet_address: norm });
+
+    if (error && error.code !== "23505") {
+      // 23505 = unique_violation, i.e. already registered — that's fine, not a real error.
+      setLoading(false);
+      setRegStatus({ type: "error", lines: ["// TRANSMISSION FAILED", "Something broke on our end. Try again in a moment."] });
+      return;
+    }
+
     saveAddr(norm);
     setLoading(false);
-    setRegStatus({
-      type: "success",
-      lines: [
-        "// CLEARANCE GRANTED",
-        `${addr.slice(0,6)}...${addr.slice(-4)} filed.`,
-        "Watch @_madjacket for mint details.",
-        `Timestamp: ${new Date().toLocaleString()}`,
-      ],
-    });
+
+    if (error?.code === "23505") {
+      setRegStatus({ type: "success", lines: ["// ALREADY REGISTERED", `${addr.slice(0,6)}...${addr.slice(-4)} is already on the list.`] });
+    } else {
+      setRegStatus({
+        type: "success",
+        lines: [
+          "// CLEARANCE GRANTED",
+          `${addr.slice(0,6)}...${addr.slice(-4)} filed.`,
+          "Watch @_madjacket for mint details.",
+          `Timestamp: ${new Date().toLocaleString()}`,
+        ],
+      });
+    }
     setRegAddr("");
   }, [regAddr]);
 

@@ -46,6 +46,12 @@ export default function Whitelist() {
 
     const { error } = await supabase.from("robinhood_whitelist").insert({ wallet_address: norm });
 
+    if (error && error.message?.includes("WHITELIST_FULL")) {
+      setLoading(false);
+      setRegStatus({ type: "error", lines: ["// CLEARANCE REGISTRY FULL", "All 199 spots for this wave are filled. Watch @_madjacket for the next drop."] });
+      return;
+    }
+
     if (error && error.code !== "23505") {
       // 23505 = unique_violation, i.e. already registered — that's fine, not a real error.
       setLoading(false);

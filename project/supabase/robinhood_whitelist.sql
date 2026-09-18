@@ -22,3 +22,27 @@ create policy "Anyone can register"
 -- Exporting the CSV is done via the Netlify function using the service_role key,
 -- which bypasses RLS and is never exposed to the browser.
 drop policy if exists "No public reads" on public.robinhood_whitelist;
+
+-- Hard cap the free-mint whitelist at 199 addresses (out of 1999 total supply).
+-- This is enforced in the database, not just on the page, so it can't be bypassed
+-- by hitting the Supabase API directly. Concurrent inserts at the exact boundary
+-- could in theory both pass the count check before either commits (a small race),
+-- but for normal signup traffic this reliably stops the list at the cap.
+create or replace function public.enforce_whitelist_cap()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  if (select count(*) from public.robinhood_whitelist) >= 199 then
+    raise exception 'WHITELIST_FULL' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists trg_enforce_whitelist_cap on public.robinhood_whitelist;
+create trigger trg_enforce_whitelist_cap
+  before insert on public.robinhood_whitelist
+  for each row execute function public.enforce_whitelist_cap();

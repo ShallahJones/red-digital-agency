@@ -110,19 +110,32 @@ export default function Whitelist() {
     setRegAddr("");
   }, [regAddr]);
 
-  const verify = useCallback(() => {
+  const verify = useCallback(async () => {
     const addr = verAddr.trim();
     if (!isValidAddr(addr)) {
       setVerStatus({ type: "error", lines: ["// ERROR", "Not a valid ETH/EVM address."] });
       return;
     }
     const norm = addr.toLowerCase();
-    if (inList(norm) && isLate(norm)) {
-      setVerStatus({ type: "error", lines: ["// LATE ARRIVAL — NOT CLEARED", `${addr.slice(0,6)}...${addr.slice(-4)} is logged, but arrived after the first 199 seats were claimed.`, "No free-mint clearance. Watch @_madjacket."] });
-    } else if (inList(norm)) {
-      setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`, "MADJACKET × ROBINHOOD — CLEARANCE ACTIVE"] });
+    const short = `${addr.slice(0,6)}...${addr.slice(-4)}`;
+    // Authoritative answer comes from the server (works on any device). If it can't be
+    // reached, fall back to what this browser remembers.
+    let status: "cleared" | "late" | "none" | null = null;
+    try {
+      const r = await fetch(`/api/whitelist-status?address=${norm}`);
+      if (r.ok) {
+        const d = await r.json();
+        if (d.status === "cleared" || d.status === "late" || d.status === "none") status = d.status;
+      }
+    } catch { /* fall through to local */ }
+    if (status === null) status = inList(norm) ? (isLate(norm) ? "late" : "cleared") : "none";
+
+    if (status === "late") {
+      setVerStatus({ type: "error", lines: ["// LATE ARRIVAL — NOT CLEARED", `${short} is logged, but arrived after the first 199 seats were claimed.`, "No free-mint clearance. Watch @_madjacket."] });
+    } else if (status === "cleared") {
+      setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${short} is on the list.`, "MADJACKET × ROBINHOOD — CLEARANCE ACTIVE"] });
     } else {
-      setVerStatus({ type: "error", lines: ["// NOT FOUND", `${addr.slice(0,6)}...${addr.slice(-4)} is not on the list.`, "Register above."] });
+      setVerStatus({ type: "error", lines: ["// NOT FOUND", `${short} is not on the list.`, "Register above."] });
     }
   }, [verAddr]);
 

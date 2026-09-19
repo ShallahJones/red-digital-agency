@@ -254,3 +254,4 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .win figcaption{padding:0 12px 9px;font-size:9px;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
 .ex-card .card{max-width:220px}
 @media (max-width:640px){.exhibit{grid-template-columns:1fr}.ex-card .card{max-width:220px}}
+.f label.chk{display:flex}

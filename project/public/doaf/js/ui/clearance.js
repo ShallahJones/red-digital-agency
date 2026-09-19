@@ -68,35 +68,34 @@ function pickStage(st) {
 function disc(ev) { ev && ev.preventDefault(); C.session = null; C.held = []; C.sel = null; setLog(''); draw(); }
 
 function formStage(st) {
-  const a = C.sel, m = a.meta || {}, key = 'doaf-draft-' + a.unit;
+  const a = C.sel, m = a.meta || {};
   const existing = S.entries.find((e) => e.unit === a.unit);
-  const base = { subject: '', rsi: '', backstory: '', knownFor: '', status: '', threat: 'Unclassified', markers: '', message: '', report: '', handle: '' };
-  const v = { ...base, ...prefillFromMeta({ ...m, extra: m.extra, attributes: m.attributes }), callsign: (m.name || '').slice(0, LIM.callsign), ...(existing ? { ...existing.entry, callsign: existing.callsign } : {}), ...(store.get(key) || {}) };
-  const f = (id, label, type = 'input', extra = '') => `<label>${label}<span class="cnt" data-c="${id}"></span>${type === 'textarea' ? `<textarea id="f-${id}" maxlength="${LIM[id]}" ${extra}>${esc(v[id])}</textarea>` : `<input id="f-${id}" maxlength="${LIM[id]}" value="${esc(v[id])}" ${extra}>`}</label>`;
+  const cut = (o) => { Object.keys(o).forEach((k) => { if (LIM[k]) o[k] = String(o[k] || '').slice(0, LIM[k]); }); return o; };
+  const flat = Object.entries({ ...(m.extra || {}), ...(m.attributes || {}) }).map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : String(Array.isArray(v) ? v.join('') : v)]).filter(([, v]) => v);
+  /* everything below comes from the asset itself: name, description, traits */
+  const auto = cut({ subject: '', rsi: '', backstory: '', knownFor: '', status: '', markers: '', threat: 'Unclassified', ...prefillFromMeta({ ...m }), callsign: m.name || m.ascii || 'Unnamed' });
+  if (!auto.markers && flat.length) auto.markers = flat.map(([k, v]) => k + ': ' + v).join(' · ').slice(0, LIM.markers);
+  if (!auto.backstory && m.description) auto.backstory = String(m.description).slice(0, LIM.backstory);
+  if (!THREATS.includes(auto.threat)) auto.threat = 'Unclassified';
+  const rows = [['Callsign', auto.callsign], ['Subject', auto.subject], ['Backstory', auto.backstory || auto.rsi]].filter(([, v]) => v);
   st.innerHTML = `<div class="grid" style="grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px" id="fg">
   <div><div class="panel"><div class="hd"><b>SPECIMEN</b><a href="#" id="back">◂ change</a></div><div class="spec" style="aspect-ratio:1;position:relative">${specimen(m, a.unit, m.name || 'specimen')}</div>
-  <h3 style="font-size:20px;margin:14px 0 6px">${esc(m.name || 'Unnamed artifact')}</h3>
-  ${m.description ? `<p class="muted" style="font-size:12px">${esc(m.description)}</p>` : ''}
-  <details><summary class="muted" style="cursor:pointer;font-size:11px;letter-spacing:.16em">ON-CHAIN METADATA</summary><pre class="raw" style="margin-top:10px">${esc(JSON.stringify(m.raw || { note: 'No CIP-25 metadata found for this asset.' }, null, 2))}</pre></details>
+  <h3 style="font-size:18px;margin:14px 0 6px">${esc(m.name || 'Unnamed artifact')}</h3>
   ${m.poolpm ? `<p class="muted" style="font-size:12px;margin-top:10px"><a target="_blank" rel="noopener" href="${esc(m.poolpm)}">pool.pm ↗</a> · <a target="_blank" rel="noopener" href="${esc(m.scan)}">cardanoscan ↗</a></p>` : ''}</div>
   <div style="margin-top:18px" id="pv"></div></div>
-  <div class="panel hot"><div class="hd"><b>STEP III // FILE YOUR ENTRY</b><span>${existing ? 'UPDATING EXISTING FILE' : 'NEW FILE'}</span></div>
-  <form class="f" id="form" autocomplete="off">
-    <div class="two">${f('callsign', 'Callsign *', 'input', 'required')}${f('handle', 'X handle (optional)')}</div>
-    ${f('subject', 'Subject')}${f('rsi', 'Residual self image (one line)')}${f('backstory', 'Backstory', 'textarea')}
-    <div class="two">${f('knownFor', 'Known for')}${f('markers', 'Visual markers')}</div>
-    <div class="two">${f('status', 'Status')}<label>Threat level<select id="f-threat">${THREATS.map((t) => `<option ${t === v.threat ? 'selected' : ''}>${t}</option>`).join('')}</select></label></div>
-    ${f('message', 'Unauthorized message')}
-    ${f('report', 'Field report for new arrivals: how did you find Madjacket, and what should they know?', 'textarea', 'style="min-height:140px"')}
+  <div class="panel hot"><div class="hd"><b>STEP III // REVIEW &amp; SIGN</b><span>${existing ? 'UPDATING EXISTING FILE' : 'NEW FILE'}</span></div>
+  <p class="muted" style="margin-bottom:16px">Filed straight from the asset's own metadata. Nothing to fill in.</p>
+  <dl class="kv dos">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}${flat.length ? `<dt>Traits</dt><dd>${flat.slice(0, 16).map(([k, v]) => `<span class="muted">${esc(k)}</span> ${esc(v)}`).join('<br>')}</dd>` : ''}</dl>
+  ${m.raw ? '' : '<p class="log err" style="margin-top:14px">No on-chain metadata found for this asset. Only its name will be filed.</p>'}
+  <form class="f" id="form" autocomplete="off" style="margin-top:22px">
     <label class="chk"><input type="checkbox" id="consent"><span>I understand that signing makes this entry <b>public</b> in the Dossier. My wallet appears only as a shortened stake ID. I can retract it any time.</span></label>
     <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn" id="go" type="submit" disabled>Sign &amp; file ▸</button>${existing ? '<button class="btn ghost" type="button" id="ret">Retract my file</button>' : ''}</div>
     <div id="out"></div></form></div></div>`;
   armImages(st);
   $('#back').onclick = (ev) => { ev.preventDefault(); C.sel = null; stage(); };
-  const read = () => { const o = {}; Object.keys(LIM).forEach((k) => (o[k] = $('#f-' + k).value.trim())); o.threat = $('#f-threat').value; return o; };
-  const upd = () => { const d = read(); store.set(key, d); Object.keys(LIM).forEach((k) => { const c = $(`[data-c="${k}"]`); if (c) c.textContent = $('#f-' + k).value.length + '/' + LIM[k]; }); $('#go').disabled = !($('#consent').checked && d.callsign); preview(d); };
-  const preview = (d) => { const ent = { unit: a.unit, callsign: d.callsign || 'CALLSIGN', publishedAt: new Date().toISOString(), entry: d, meta: m }; $('#pv').innerHTML = `<div class="eyebrow" style="margin-bottom:10px">Public card preview</div><div style="max-width:260px">${cardHTML(ent).replace('href="#/agent/', 'tabindex="-1" data-x="')}</div>`; armImages($('#pv')); };
-  $$('#form input,#form textarea,#form select').forEach((i) => i.addEventListener('input', upd)); upd();
+  const read = () => cut({ ...auto });
+  const preview = (d) => { const ent = { unit: a.unit, callsign: d.callsign, publishedAt: new Date().toISOString(), entry: d, meta: m }; $('#pv').innerHTML = `<div class="eyebrow" style="margin-bottom:10px">Public card preview</div><div style="max-width:260px">${cardHTML(ent).replace('href="#/agent/', 'tabindex="-1" data-x="')}</div>`; armImages($('#pv')); };
+  preview(read()); $('#consent').addEventListener('input', () => { $('#go').disabled = !$('#consent').checked; });
   $('#form').onsubmit = (ev) => { ev.preventDefault(); file(a, read(), existing); };
   if (existing) $('#ret').onclick = () => retract(a);
 }

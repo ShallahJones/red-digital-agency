@@ -166,6 +166,26 @@ export function roster() {
 }
 
 /* ───────────── AGENT ───────────── */
+/* Second window for assets that are themselves HTML (comics): poster first, then the live, clickable page, as on pool.pm. */
+const CID_RE = /^https?:\/\/[^/]+\/ipfs\/((?:Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})(?:\/[\w.\-%]{1,120})*)$/;
+function frameUrl(u) { const m = typeof u === 'string' && u.match(CID_RE); return m ? CONFIG.IPFS_GATEWAYS[0] + m[1] : u; }
+function mountComic(e, p) {
+  const m = e.meta; if (!m || !m.htmlSrc || $('#comic')) return;
+  const src = frameUrl(m.htmlSrc), poster = m.image && !/^data:text/.test(m.image) ? thumb(m, e.unit, e.callsign) : sigil(e.unit, 'COMIC');
+  const pm = 'https://pool.pm/' + ((m.fingerprint) || p.policy + '.' + p.nameHex);
+  const host = $('.view'); if (!host) return;
+  host.insertAdjacentHTML('beforeend', `<section class="panel comic" id="comic"><div class="hd"><b>READ // INTERACTIVE</b><span>ON-CHAIN HTML</span></div>
+    <div class="cwin" id="cwin"><div class="poster" id="cposter">${poster}<button class="btn cplay" id="cplay" type="button">▶ Open the comic</button></div></div>
+    <p class="muted" style="font-size:12px;margin:12px 0 0;display:flex;gap:16px;flex-wrap:wrap"><button class="btn ghost" id="cfs" type="button" hidden>Fullscreen</button><a target="_blank" rel="noopener" href="${esc(pm)}">Open on pool.pm ↗</a></p></section>`);
+  armImages($('#comic'));
+  const open = () => {
+    const w = $('#cwin'); if (!w || w.querySelector('iframe')) return;
+    w.innerHTML = `<iframe title="${esc(e.callsign)} — interactive comic" sandbox="allow-scripts" allow="fullscreen" allowfullscreen referrerpolicy="no-referrer" src="${esc(src)}"></iframe>`;
+    const fs = $('#cfs'); if (fs) { fs.hidden = false; fs.onclick = () => { const f = w.requestFullscreen || w.webkitRequestFullscreen; f && f.call(w).catch(() => {}); }; }
+  };
+  $('#cplay').onclick = open; $('#cposter').onclick = (ev) => { if (ev.target.id !== 'cplay') open(); };
+}
+
 export async function agent(unit) {
   const e = S.entries.find((x) => x.unit === unit);
   if (!e) { app().innerHTML = `<div class="view"><div class="panel"><div class="hd"><b>404 // FILE NOT FOUND</b></div><p>Nothing is filed under that ID. Either it was never written or somebody redacted it.</p><a class="btn ghost" href="#/roster">Back to roster</a></div></div>`; return; }
@@ -173,7 +193,7 @@ export async function agent(unit) {
   const row = (k, v) => (v ? `<dt>${k}</dt><dd>${redactify(v)}</dd>` : '');
   const days = daysSince(e.publishedAt);
   app().innerHTML = `<div class="view"><p><a href="#/roster" class="muted">◂ Roster</a></p>
-  <div class="agent"><div><div class="spec" id="spec">${specimen(e.meta, e.unit, e.callsign)}</div>
+  <div class="agent"><div><div class="spec" id="spec">${e.meta && e.meta.htmlSrc ? thumb(e.meta, e.unit, e.callsign) : specimen(e.meta, e.unit, e.callsign)}</div>
     <div class="tabs"><button class="on" data-t="s">Specimen</button><button data-t="c">On-chain</button></div>
     <div id="chain" hidden><pre class="raw">${esc(JSON.stringify({ unit: e.unit, policy: p.policy, assetNameHex: p.nameHex, owner: e.owner, fingerprint: e.meta && e.meta.fingerprint, mediaType: e.meta && e.meta.mediaType }, null, 2))}</pre></div>
     <p class="muted" style="font-size:12px"><a target="_blank" rel="noopener" href="https://pool.pm/${esc((e.meta && e.meta.fingerprint) || p.policy + '.' + p.nameHex)}">pool.pm ↗</a> · <a target="_blank" rel="noopener" href="https://cardanoscan.io/token/${esc(e.unit)}">cardanoscan ↗</a></p></div>
@@ -184,9 +204,9 @@ export async function agent(unit) {
     ${d.message ? `<div class="quote">${redactify('“' + d.message + '”')}</div><div class="muted" style="font-size:10px;letter-spacing:.2em;margin-top:-6px">UNAUTHORIZED MESSAGE</div>` : ''}
     ${d.report ? `<h3 style="font-size:15px;margin:22px 0 10px;color:var(--red)">Field report for new arrivals</h3><div class="report">${esc(d.report)}</div>` : ''}
     <p style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap"><button class="btn ghost" id="cp">Copy link</button><button class="btn ghost" id="bd">Download badge</button></p></div></div></div>`;
-  armImages(app());
+  armImages(app()); mountComic(e, p);
   $$('.tabs button').forEach((b) => (b.onclick = () => { $$('.tabs button').forEach((x) => x.classList.toggle('on', x === b)); $('#spec').hidden = b.dataset.t !== 's'; $('#chain').hidden = b.dataset.t === 's'; }));
   $('#cp').onclick = () => { navigator.clipboard.writeText(location.href.split('#')[0] + '#/agent/' + e.unit).then(() => toast('Link copied'), () => toast('Copy failed')); };
   $('#bd').onclick = () => downloadBadge(e, e.meta && e.meta.image).catch(() => toast('Badge failed'));
-  if (!e.meta || (!e.meta.image && !e.meta.htmlSrc)) { const m = await safeAssetInfo([p]); if (m[e.unit] && $('#spec')) { e.meta = { ...e.meta, ...m[e.unit] }; $('#spec').innerHTML = specimen(e.meta, e.unit, e.callsign); armImages($('#spec')); } }
+  if (!e.meta || (!e.meta.image && !e.meta.htmlSrc)) { const m = await safeAssetInfo([p]); if (m[e.unit] && $('#spec')) { e.meta = { ...e.meta, ...m[e.unit] }; $('#spec').innerHTML = e.meta.htmlSrc ? thumb(e.meta, e.unit, e.callsign) : specimen(e.meta, e.unit, e.callsign); armImages($('#spec')); mountComic(e, p); } }
 }

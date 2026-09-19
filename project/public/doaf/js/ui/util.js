@@ -56,14 +56,18 @@ export function runLoad(box) {
   (function f(t) { if (gone) return; const k = Math.min(1, (t - t0) / T); bb.textContent = Math.round(k * 100) + '%'; bar.style.width = k * 100 + '%'; k < 1 ? requestAnimationFrame(f) : end(); })(t0);
   setTimeout(end, T + 1200);
 }
+const IPFS_RE = /^https?:\/\/[^/]+\/ipfs\/((?:Qm[1-9A-HJ-NP-Za-km-z]{44}|bafy[a-z2-7]{50,})(?:\/[\w.\-]{1,80}){0,2})$/;
+/* IPFS art goes through our own Worker: public gateways block cross-origin embeds */
+export const artUrl = (u) => { const m = CONFIG.API_BASE && typeof u === 'string' && u.match(IPFS_RE); return m ? CONFIG.API_BASE + '/v1/img/' + m[1] : u; };
 export function armImages(root) {
   $$('img[data-sig]', root).forEach((im) => {
     im.removeAttribute('crossorigin');
+    { const p = artUrl(im.getAttribute('src')); if (p !== im.getAttribute('src')) im.src = p; }
     { const box = im.closest('.card .img'); if (box) { let fired = 0; const go = () => { if (fired++) return; runLoad(box); }; im.complete && im.naturalWidth ? go() : im.addEventListener('load', go, { once: true }); } }
     let n = 0;
     im.addEventListener('error', () => {
       /* any /ipfs/<cid> URL can be served by any gateway: walk the list before giving up */
-      const m = im.src.match(/^https?:\/\/[^/]+\/ipfs\/(.+)$/), gws = CONFIG.IPFS_GATEWAYS;
+      const m = im.src.match(/^https?:\/\/[^/]+\/(?:ipfs|v1\/img)\/(.+)$/), gws = CONFIG.IPFS_GATEWAYS;
       if (m && n < gws.length) { const next = gws[n++] + m[1]; if (next !== im.src) { im.src = next; return; } if (n < gws.length) { im.src = gws[n++] + m[1]; return; } }
       console.warn('DOAF: art failed to load', im.src);
       const w = document.createElement('div'); w.innerHTML = sigil(im.dataset.sig, im.dataset.lbl); im.replaceWith(w.firstChild);

@@ -1,9 +1,9 @@
 // Provisional intern badge → PNG. Peeling on purpose.
-import { daysSince } from './util.js';
+import { daysSince, artUrl } from './util.js';
 import { CONFIG } from '../config.js';
 async function loadArt(u) {
   if (!u) return null;
-  const m = u.match(/\/ipfs\/(.+)$/), list = m ? [u, ...CONFIG.IPFS_GATEWAYS.map((g) => g + m[1])] : [u];
+  const m = u.match(/\/ipfs\/(.+)$/), list = m ? [artUrl(u), u, ...CONFIG.IPFS_GATEWAYS.map((g) => g + m[1])] : [u];
   for (const src of list) { try { const r = await fetch(src, { referrerPolicy: 'no-referrer' }); if (!r.ok) continue; return await createImageBitmap(await r.blob()); } catch {} }
   return null;
 }

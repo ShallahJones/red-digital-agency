@@ -4,7 +4,7 @@ import { listWallets, connect, heldAssets, signText } from '../lib/wallet.js';
 import { safeAssetInfo, unitOf, prefillFromMeta } from '../lib/chain.js';
 import { canonical, sha256Hex, bytesToHex } from '../lib/cardano.js';
 import { submitEntry, retractEntry } from '../lib/api.js';
-import { $, $$, esc, short, store, toast, thumb, specimen, armImages, runLoad, THREATS } from './util.js';
+import { $, $$, esc, short, store, toast, thumb, specimen, armImages, runLoad, artUrl, THREATS } from './util.js';
 import { S, cardHTML } from './views.js';
 import { downloadBadge } from './badge.js';
 
@@ -74,7 +74,7 @@ function disc(ev) { ev && ev.preventDefault(); C.session = null; C.held = []; C.
 function ambient(src) {
   let a = $('#amb'); if (!src) { a && a.remove(); return; }
   if (!a) { a = document.createElement('div'); a.id = 'amb'; document.body.appendChild(a); }
-  a.style.backgroundImage = `url("${src.replace(/"/g, '%22')}")`; requestAnimationFrame(() => a.classList.add('on'));
+  a.style.backgroundImage = `url("${artUrl(src).replace(/"/g, '%22')}")`; requestAnimationFrame(() => a.classList.add('on'));
 }
 function formStage(st) {
   const a = C.sel, m = a.meta || {};
@@ -116,6 +116,10 @@ async function file(a, entry, existing) {
   const go = $('#go'); go.disabled = true;
   if (!CONFIG.API_BASE) { setLog('Filing is not live yet. Nothing was signed.', 'err'); go.disabled = false; return; }
   try {
+    { /* mirror the server's sanitizer exactly so the signed hash matches */
+      const cl = (v, n) => String(v ?? '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f\u202a-\u202e\u2066-\u2069]/g, '').trim().slice(0, n), o = {};
+      Object.keys(LIM).forEach((k) => { o[k] = cl(entry[k], LIM[k]); }); o.threat = THREATS.includes(entry.threat) ? entry.threat : 'Unclassified'; entry = o;
+    }
     const hash = await sha256Hex(canonical(entry)), message = msg('PUBLISH', a.unit, hash);
     setLog('Waiting for your wallet to sign. Check the popup.');
     const sig = await signText(C.session, message);

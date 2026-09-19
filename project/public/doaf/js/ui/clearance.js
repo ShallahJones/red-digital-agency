@@ -4,7 +4,7 @@ import { listWallets, connect, heldAssets, signText } from '../lib/wallet.js';
 import { safeAssetInfo, unitOf, prefillFromMeta } from '../lib/chain.js';
 import { canonical, sha256Hex, bytesToHex } from '../lib/cardano.js';
 import { submitEntry, retractEntry } from '../lib/api.js';
-import { $, $$, esc, short, store, toast, thumb, specimen, armImages, THREATS } from './util.js';
+import { $, $$, esc, short, store, toast, thumb, specimen, armImages, runLoad, THREATS } from './util.js';
 import { S, cardHTML } from './views.js';
 import { downloadBadge } from './badge.js';
 
@@ -71,15 +71,6 @@ function pickStage(st) {
 function disc(ev) { ev && ev.preventDefault(); C.session = null; C.held = []; C.sel = null; C.auto = false; setLog(''); draw(); }
 
 /* the page takes on the asset: loader sweep, card flip-in, faint backdrop */
-function runLoad(box) {
-  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  box.classList.add('flip'); const o = document.createElement('div'); o.className = 'ld2';
-  o.innerHTML = '<div class="tt2"><span>LOADING</span><i>∴</i><b>0%</b></div><div class="bar2"><div></div></div><div class="wr2">Do not turn off.</div>'; box.appendChild(o);
-  const bb = o.querySelector('b'), bar = o.querySelector('.bar2 div'), t0 = performance.now(), T = 1100; let gone = false;
-  const end = () => { if (gone) return; gone = true; o.style.opacity = 0; setTimeout(() => o.remove(), 500); };
-  (function f(t) { if (gone) return; const k = Math.min(1, (t - t0) / T); bb.textContent = Math.round(k * 100) + '%'; bar.style.width = k * 100 + '%'; k < 1 ? requestAnimationFrame(f) : end(); })(t0);
-  setTimeout(end, T + 1200);
-}
 function ambient(src) {
   let a = $('#amb'); if (!src) { a && a.remove(); return; }
   if (!a) { a = document.createElement('div'); a.id = 'amb'; document.body.appendChild(a); }
@@ -136,6 +127,7 @@ async function file(a, entry, existing) {
     setLog('');
     $('#out').innerHTML = `<div class="panel hot" style="margin-top:8px"><div class="hd"><b>FILED</b><span>PUBLIC</span></div><p class="eyebrow" style="margin-bottom:12px">Cleared</p><p>Welcome, Intern. Signal unlocked: Madjacket FM, holder channel.</p><p style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="#/agent/${esc(e.unit)}">View my file ▸</a><button class="btn ghost" type="button" id="bdg">Download badge</button></p></div>`;
     $('#out').insertAdjacentHTML('beforeend', '<div id="rd-ok" style="margin-top:18px"></div>'); mountRadio($('#rd-ok'));
+    runLoad($('#out .panel'));
     $('#bdg').onclick = () => downloadBadge(e, e.meta && e.meta.image);
     toast('Filed. You are now on the roster.');
   } catch (e) { setLog(e && (e.info || e.message) ? String(e.info || e.message) : 'Cancelled.', 'err'); go.disabled = false; }

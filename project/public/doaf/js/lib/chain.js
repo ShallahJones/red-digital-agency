@@ -27,9 +27,10 @@ export function normalizeAsset(info) {
     out.name = j(raw.name) || ascii;
     out.description = j(raw.description) || '';
     out.mediaType = raw.mediaType || '';
-    const img = resolveUri(raw.image);
-    out.image = img;
     const files = Array.isArray(raw.files) ? raw.files : [];
+    const fileImg = files.find((f) => /^image\//i.test(f.mediaType || '') && f.src);
+    const img = resolveUri(raw.image || (fileImg && fileImg.src) || '');
+    out.image = img;
     const html = files.find((f) => /html/i.test(f.mediaType || '')) || (/html/i.test(raw.mediaType || '') && raw.src ? { src: raw.src } : null) || (/html/i.test(raw.mediaType || '') ? { src: raw.image } : null);
     if (html) out.htmlSrc = resolveUri(html.src);
     if (/html/i.test(out.mediaType) && !out.htmlSrc) out.htmlSrc = img;

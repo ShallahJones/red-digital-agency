@@ -268,3 +268,6 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .ld2 .tt2 i{font-style:normal;color:var(--dim)}.ld2 .tt2 b{margin-left:auto;font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
 .ld2 .bar2{margin-top:12px;height:1px;background:var(--line)}.ld2 .bar2 div{height:1px;width:0;background:var(--acc)}
 .ld2 .wr2{margin-top:12px;font:400 9px var(--f-m);letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
+
+.card .img.flip{animation:flipin .9s cubic-bezier(.2,.7,.2,1) both}.card .img .ld2{position:absolute;inset:0;z-index:4;background:var(--bg);display:flex;flex-direction:column;justify-content:center;padding:0 8%;transition:opacity .5s}
+.card .img .ld2 .tt2{font-size:9px;letter-spacing:.2em}.card .img .ld2 .wr2{display:none}

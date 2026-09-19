@@ -47,14 +47,25 @@ export function thumb(meta, unit, label) {
   if (meta && meta.image && !/^data:text/.test(meta.image)) return `<img alt="${esc(label)}" loading="lazy" crossorigin="anonymous" referrerpolicy="no-referrer" src="${esc(meta.image)}" data-sig="${esc(unit)}" data-lbl="${esc(label)}">`;
   return sigil(unit, meta && meta.htmlSrc ? 'HTML SPECIMEN' : label);
 }
+export function runLoad(box) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  box.classList.add('flip'); const o = document.createElement('div'); o.className = 'ld2';
+  o.innerHTML = '<div class="tt2"><span>LOADING</span><i>∴</i><b>0%</b></div><div class="bar2"><div></div></div><div class="wr2">Do not turn off.</div>'; box.appendChild(o);
+  const bb = o.querySelector('b'), bar = o.querySelector('.bar2 div'), t0 = performance.now(), T = 1100; let gone = false;
+  const end = () => { if (gone) return; gone = true; o.style.opacity = 0; setTimeout(() => o.remove(), 500); };
+  (function f(t) { if (gone) return; const k = Math.min(1, (t - t0) / T); bb.textContent = Math.round(k * 100) + '%'; bar.style.width = k * 100 + '%'; k < 1 ? requestAnimationFrame(f) : end(); })(t0);
+  setTimeout(end, T + 1200);
+}
 export function armImages(root) {
   $$('img[data-sig]', root).forEach((im) => {
     im.removeAttribute('crossorigin');
+    { const box = im.closest('.card .img'); if (box) { let fired = 0; const go = () => { if (fired++) return; runLoad(box); }; im.complete && im.naturalWidth ? go() : im.addEventListener('load', go, { once: true }); } }
     let n = 0;
     im.addEventListener('error', () => {
-      /* try the other IPFS gateways before giving up on the art */
-      const gws = CONFIG.IPFS_GATEWAYS, cur = gws.findIndex((g) => im.src.startsWith(g));
-      if (cur >= 0 && n < gws.length - 1) { n++; im.src = gws[(cur + 1) % gws.length] + im.src.slice(gws[cur].length); return; }
+      /* any /ipfs/<cid> URL can be served by any gateway: walk the list before giving up */
+      const m = im.src.match(/^https?:\/\/[^/]+\/ipfs\/(.+)$/), gws = CONFIG.IPFS_GATEWAYS;
+      if (m && n < gws.length) { const next = gws[n++] + m[1]; if (next !== im.src) { im.src = next; return; } if (n < gws.length) { im.src = gws[n++] + m[1]; return; } }
+      console.warn('DOAF: art failed to load', im.src);
       const w = document.createElement('div'); w.innerHTML = sigil(im.dataset.sig, im.dataset.lbl); im.replaceWith(w.firstChild);
     });
   });

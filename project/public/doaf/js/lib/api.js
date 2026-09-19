@@ -1,5 +1,6 @@
 // Public dossier data: Worker API + seed file.
 import { CONFIG } from '../config.js';
+import { safeAssetInfo, splitUnit } from './chain.js';
 
 export async function getJson(url) { const pre = globalThis.__DOAF_DATA__ && globalThis.__DOAF_DATA__[url]; if (pre) return pre; const r = await fetch(url, { headers: { accept: 'application/json' } }); if (!r.ok) throw new Error(r.status); return r.json(); }
 
@@ -11,6 +12,12 @@ export async function loadEntries() {
     catch { source = 'seed'; }
   }
   list.sort((a, b) => (b.publishedAt || '').localeCompare(a.publishedAt || ''));
+  /* entries filed before their art resolved: look the art up again, no re-signing needed */
+  const need = list.filter((e) => !(e.meta && (e.meta.image || e.meta.htmlSrc))).slice(0, 20);
+  if (need.length && CONFIG.API_BASE) {
+    const info = await Promise.race([safeAssetInfo(need.map((e) => splitUnit(e.unit)).map((p) => ({ policy: p.policy, nameHex: p.nameHex }))), new Promise((r) => setTimeout(() => r({}), 4000))]);
+    need.forEach((e) => { const m = info[e.unit]; if (m) e.meta = { ...(e.meta || {}), ...m }; });
+  }
   return { entries: list, source };
 }
 

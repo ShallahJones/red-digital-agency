@@ -221,6 +221,10 @@ export async function agent(unit) {
     ${d.report ? `<h3 style="font-size:15px;margin:22px 0 10px;color:var(--red)">Field report for new arrivals</h3><div class="report">${esc(d.report)}</div>` : ''}
     <p style="margin-top:22px;display:flex;gap:12px;flex-wrap:wrap"><button class="btn ghost" id="cp">Copy link</button><button class="btn ghost" id="bd">Download badge</button></p></div></div></div>`;
   armImages(app()); mountComic(e, p);
+  if (CONFIG.API_BASE) fetch(CONFIG.API_BASE.replace(/\/$/, '') + '/v1/supply?unit=' + e.unit).then((r) => r.ok && r.json()).then((s) => {
+    const dl = $('.kv.dos'); if (!s || !(s.supply > 0) || !dl || $('#edn')) return;
+    dl.insertAdjacentHTML('beforeend', `<dt id="edn">Edition</dt><dd>${s.supply === 1 ? '1 of 1' : 'Edition of ' + s.supply} · ${s.holders} holder${s.holders === 1 ? '' : 's'}</dd>`);
+  }).catch(() => {});
   $$('.tabs button').forEach((b) => (b.onclick = () => { $$('.tabs button').forEach((x) => x.classList.toggle('on', x === b)); $('#spec').hidden = b.dataset.t !== 's'; $('#chain').hidden = b.dataset.t === 's'; }));
   $('#cp').onclick = () => { navigator.clipboard.writeText(location.href.split('#')[0] + '#/agent/' + e.unit).then(() => toast('Link copied'), () => toast('Copy failed')); };
   $('#bd').onclick = () => downloadBadge(e, e.meta && e.meta.image).catch(() => toast('Badge failed'));

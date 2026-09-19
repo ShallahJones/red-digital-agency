@@ -237,7 +237,7 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
   .top .hide-s{display:none}
   #dm{grid-template-columns:minmax(0,1fr);overflow:auto}#dm .fr{height:240px}
 }
-@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}.g4.roster,.g3.roster{grid-template-columns:repeat(2,minmax(0,1fr))}.f .two{grid-template-columns:1fr}.top{gap:12px;padding-inline:16px}.founder{grid-template-columns:1fr}.portrait{max-width:200px}.radio .rd-main{grid-template-columns:96px minmax(0,1fr)}}
+@media (max-width:560px){.g2,.g3,.g4{grid-template-columns:1fr}.g4.roster,.g3.roster{grid-template-columns:repeat(2,minmax(0,1fr))}.f .two{grid-template-columns:1fr}.top{gap:12px;padding-inline:16px}.founder{grid-template-columns:1fr}.portrait{max-width:260px}.radio .rd-main{grid-template-columns:96px minmax(0,1fr)}}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.pg .typed p{opacity:1}}
 
 /* case exhibit: video window + roster placeholder */
@@ -272,3 +272,9 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .card .img.flip{animation:flipin .9s cubic-bezier(.2,.7,.2,1) both}.card .img .ld2{position:absolute;inset:0;z-index:4;background:var(--bg);display:flex;flex-direction:column;justify-content:center;padding:0 8%;transition:opacity .5s}
 .card .img .ld2 .tt2{font-size:9px;letter-spacing:.2em}.card .img .ld2 .wr2{display:none}
 .more{grid-column:1/-1;text-align:center;padding:14px;font-size:11px;letter-spacing:.2em}
+/* founder portrait: show the whole square art, never crop */
+.founder{grid-template-columns:min(220px,34vw) minmax(0,1fr)}
+.portrait{background:#0b0b0b}
+.portrait .a,.portrait .b{display:block}
+.portrait .a>*,.portrait .b>*{position:absolute;inset:0;width:100%;height:100%;max-width:none;margin:0;padding:0;border:0;aspect-ratio:auto}
+.portrait img,.portrait svg{width:100%;height:100%;object-fit:contain;display:block}

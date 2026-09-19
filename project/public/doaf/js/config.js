@@ -19,7 +19,7 @@ export const CONFIG = {
 
   // Chain data. Koios is free and CORS-open. Swap for your own key/proxy if you like.
   KOIOS_BASE: 'https://api.koios.rest/api/v1',
-  IPFS_GATEWAYS: ['https://ipfs.io/ipfs/', 'https://w3s.link/ipfs/', 'https://dweb.link/ipfs/', 'https://gateway.pinata.cloud/ipfs/'],
+  IPFS_GATEWAYS: ['https://w3s.link/ipfs/', 'https://gateway.pinata.cloud/ipfs/', 'https://nftstorage.link/ipfs/', 'https://cloudflare-ipfs.com/ipfs/', 'https://ipfs.io/ipfs/'],
 
   // Must match ALLOWED_DOMAINS on the Worker. Defaults to wherever the page is served.
   DOMAIN: typeof location !== 'undefined' && location.hostname ? location.hostname : 'madjacket.org',

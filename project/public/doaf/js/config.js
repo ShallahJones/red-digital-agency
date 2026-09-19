@@ -3,6 +3,7 @@
 // ─────────────────────────────────────────────────────────────
 export const CONFIG = {
   // Collections that grant clearance. Add more policy IDs any time.
+  PRETENDER: { nameHex: '363932626266326431363935653664613238643763623537' },
   POLICY_IDS: ['9cd39a656eeb4aa407a5aaa052f160c7482cb17d4cc9dff1a7bac6c0'],
 
   // Founder assets (asset name in HEX). PORTRAIT = filed pfp, ASCENDED = what it became.

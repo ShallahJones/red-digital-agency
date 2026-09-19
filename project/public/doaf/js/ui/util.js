@@ -33,7 +33,7 @@ export function sigil(seed, label = '') {
     cells += shape(px, py) + (v === 0 ? shape(mx, py) : `<g transform="translate(${360},0) scale(-1,1)">${shape(px, py)}</g>`);
   }
   const hue = 350 + (r() % 20);
-  return `<svg viewBox="0 0 360 360" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="360" fill="#050506"/><g fill="hsl(${hue} 90% 50%)" opacity=".92">${cells}</g><circle cx="180" cy="180" r="150" fill="none" stroke="#ff2b2b" stroke-opacity=".35"/><circle cx="180" cy="180" r="166" fill="none" stroke="#fff" stroke-opacity=".08" stroke-dasharray="3 7"/><text x="180" y="342" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" letter-spacing="3" fill="#ff2b2b" fill-opacity=".7">${esc(label || 'NO IMAGE ON FILE')}</text></svg>`;
+  return `<svg viewBox="0 0 360 360" role="img" aria-label="${esc(label)}" xmlns="http://www.w3.org/2000/svg"><rect width="360" height="360" fill="#0b0a09"/><g fill="hsl(${hue} 38% 50%)" opacity=".92">${cells}</g><circle cx="180" cy="180" r="150" fill="none" stroke="#ff003c" stroke-opacity=".35"/><circle cx="180" cy="180" r="166" fill="none" stroke="#fff" stroke-opacity=".08" stroke-dasharray="3 7"/><text x="180" y="342" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="10" letter-spacing="3" fill="#ff003c" fill-opacity=".7">${esc(label || 'NO IMAGE ON FILE')}</text></svg>`;
 }
 
 // Specimen renderer: HTML NFTs run in a sandboxed iframe (no same-origin, no top navigation).

@@ -1,7 +1,7 @@
 // Public dossier data: Worker API + seed file.
 import { CONFIG } from '../config.js';
 
-async function getJson(url) { const pre = globalThis.__DOAF_DATA__ && globalThis.__DOAF_DATA__[url]; if (pre) return pre; const r = await fetch(url, { headers: { accept: 'application/json' } }); if (!r.ok) throw new Error(r.status); return r.json(); }
+export async function getJson(url) { const pre = globalThis.__DOAF_DATA__ && globalThis.__DOAF_DATA__[url]; if (pre) return pre; const r = await fetch(url, { headers: { accept: 'application/json' } }); if (!r.ok) throw new Error(r.status); return r.json(); }
 
 export async function loadEntries() {
   let list = [], source = 'seed';

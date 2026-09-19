@@ -1,3 +1,4 @@
+import { mountRadio, setHolder } from './radio.js';
 import { CONFIG } from '../config.js';
 import { listWallets, connect, heldAssets, signText } from '../lib/wallet.js';
 import { safeAssetInfo, unitOf, prefillFromMeta } from '../lib/chain.js';
@@ -20,8 +21,8 @@ export async function clearance() {
 
 function draw() {
   const live = CONFIG.API_BASE ? '' : `<p class="log" style="margin:0 0 18px;color:var(--holo)">TEST MODE: no server yet. You'll sign and get a packet to send by hand.</p>`;
-  app().innerHTML = `<div class="view"><div class="eyebrow">Clearance</div><h1 style="font-size:clamp(32px,5vw,60px);margin:10px 0 8px">Get cleared</h1>
-  <p class="muted" style="max-width:62ch">Connect your wallet, pick a Dataleak, file your entry. No transaction.</p>${live}
+  app().innerHTML = `<div class="view"><div class="eyebrow">Clearance</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Get cleared</h1>
+  <p class="muted" style="max-width:62ch">Files are missing. Connect your wallet, pick a Dataleak, add yours. No transaction.</p>${live}
   <div id="stage"></div><div class="log ${C.logCls}" id="log" style="margin-top:14px">${esc(C.log)}</div></div>`;
   stage();
 }
@@ -58,6 +59,7 @@ async function doConnect(key) {
 function pickStage(st) {
   const bar = `<div class="hd"><b>STEP II // SPECIMENS</b><span>${esc(C.session.name)} · ${esc(short(C.session.stake || ''))} · <a href="#" id="dc">disconnect</a></span></div>`;
   if (!C.held.length) { st.innerHTML = `<div class="panel">${bar}<h3 style="font-size:22px;margin-bottom:10px">No artifacts found</h3><p class="muted">The Department only clears the ones who were there. This wallet holds nothing from the Dataleak collection. If your asset sits in a different wallet, disconnect and try that one.</p><a class="btn" target="_blank" rel="noopener" href="${esc(CONFIG.WAYUP_URL)}">Find one on wayup ↗</a></div>`; $('#dc').onclick = disc; return; }
+  setHolder(true);
   st.innerHTML = `<div class="panel">${bar}<p class="muted">Pick an asset. One file per asset, editable anytime.</p>
   <div class="picks">${C.held.map((h) => { const filed = S.entries.some((e) => e.unit === h.unit); return `<button class="pick" data-u="${esc(h.unit)}"><div class="img">${thumb(h.meta, h.unit, (h.meta && h.meta.name) || h.nameHex)}</div><span>${esc((h.meta && h.meta.name) || h.unit.slice(56, 72))}${filed ? ' · <b class="red">FILED</b>' : ''}</span></button>`; }).join('')}</div></div>`;
   armImages(st); $('#dc').onclick = disc;
@@ -115,7 +117,8 @@ async function file(a, entry, existing) {
     store.del('doaf-draft-' + a.unit);
     const e = r.entry; S.entries = [e, ...S.entries.filter((x) => x.unit !== e.unit)];
     setLog('');
-    $('#out').innerHTML = `<div class="panel hot" style="margin-top:8px"><div class="hd"><b>FILED</b><span>PUBLIC</span></div><p class="stamp" style="margin-bottom:12px">Cleared</p><p>Welcome, Intern. Your role has been automatically approved by the system.</p><p style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="#/agent/${esc(e.unit)}">View my file ▸</a><button class="btn ghost" type="button" id="bdg">Download badge</button></p></div>`;
+    $('#out').innerHTML = `<div class="panel hot" style="margin-top:8px"><div class="hd"><b>FILED</b><span>PUBLIC</span></div><p class="eyebrow" style="margin-bottom:12px">Cleared</p><p>Welcome, Intern. Signal unlocked: Madjacket FM, holder channel.</p><p style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="#/agent/${esc(e.unit)}">View my file ▸</a><button class="btn ghost" type="button" id="bdg">Download badge</button></p></div>`;
+    $('#out').insertAdjacentHTML('beforeend', '<div id="rd-ok" style="margin-top:18px"></div>'); mountRadio($('#rd-ok'));
     $('#bdg').onclick = () => downloadBadge(e, e.meta && e.meta.image);
     toast('Filed. You are now on the roster.');
   } catch (e) { setLog(e && (e.info || e.message) ? String(e.info || e.message) : 'Cancelled.', 'err'); go.disabled = false; }
@@ -124,7 +127,7 @@ async function file(a, entry, existing) {
 function deadDrop(packet) {
   const txt = JSON.stringify(packet, null, 2);
   setLog('Signed. Nothing was sent anywhere.', 'ok');
-  $('#out').innerHTML = `<div class="panel" style="margin-top:8px"><div class="hd"><b>DEAD DROP</b><span>SIGNED PACKET</span></div><p class="muted">Send this to the Director (DM on X or Discord). It's signed by your wallet, so it can be verified and added to the dossier without trusting anyone.</p><textarea readonly style="min-height:150px;width:100%;font-size:11px;background:#05070a;color:var(--steel);border:1px solid var(--line2);padding:10px" id="pk">${esc(txt)}</textarea><p style="margin-top:12px"><button type="button" class="btn ghost" id="cpk">Copy packet</button></p></div>`;
+  $('#out').innerHTML = `<div class="panel" style="margin-top:8px"><div class="hd"><b>DEAD DROP</b><span>SIGNED PACKET</span></div><p class="muted">Send this to the Director (DM on X or Discord). It's signed by your wallet, so it can be verified and added to the dossier without trusting anyone.</p><textarea readonly style="min-height:150px;width:100%;font-size:11px;background:#060304;color:var(--steel);border:1px solid var(--line2);padding:10px" id="pk">${esc(txt)}</textarea><p style="margin-top:12px"><button type="button" class="btn ghost" id="cpk">Copy packet</button></p></div>`;
   $('#cpk').onclick = () => navigator.clipboard.writeText(txt).then(() => toast('Packet copied'), () => { $('#pk').select(); toast('Select and copy'); });
 }
 

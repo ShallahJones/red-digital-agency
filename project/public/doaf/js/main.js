@@ -24,7 +24,7 @@ async function route() {
   await S.ready; if (S.cleanup) { S.cleanup(); S.cleanup = null; }
   const h = location.hash || '#/', [, a, b] = h.split('/');
   $$('[data-h]').forEach((l) => l.classList.toggle('on', l.dataset.h === (a ? '#/' + a : '#/') || (a === 'agent' && l.dataset.h === '#/roster')));
-  scrollTo(0, 0);
+  scrollTo(0, 0); { const am = $('#amb'); am && am.remove(); }
   ({ radio: () => { $('#app').innerHTML = `<div class="view"><div class="eyebrow">Radio</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Madjacket FM</h1><p class="muted" style="max-width:60ch">Broadcasting from Cortex City. Open to everyone.</p><div id="rd" style="margin-top:22px;max-width:760px"></div></div>`; S.cleanup = mountRadio($('#rd')); }, file: () => file(b), roster, agent: () => agent(decodeURIComponent(b || '')), clearance }[a] || home)();
 }
 const LINES = ['Initializing system . . .', 'Waking the system . . .', 'Verifying clearance . . .', 'Sweeping for Dataleak artifacts . . .', 'Filing the unfileable . . .', 'Redacting things . . .', 'Establishing secure connection . . .', 'Opening the drawer . . .'];

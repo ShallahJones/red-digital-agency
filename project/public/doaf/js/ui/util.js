@@ -48,8 +48,18 @@ export function thumb(meta, unit, label) {
   return sigil(unit, meta && meta.htmlSrc ? 'HTML SPECIMEN' : label);
 }
 export function armImages(root) {
-  $$('img[data-sig]', root).forEach((im) => im.addEventListener('error', () => { const w = document.createElement('div'); w.innerHTML = sigil(im.dataset.sig, im.dataset.lbl); im.replaceWith(w.firstChild); }, { once: true }));
+  $$('img[data-sig]', root).forEach((im) => {
+    im.removeAttribute('crossorigin');
+    let n = 0;
+    im.addEventListener('error', () => {
+      /* try the other IPFS gateways before giving up on the art */
+      const gws = CONFIG.IPFS_GATEWAYS, cur = gws.findIndex((g) => im.src.startsWith(g));
+      if (cur >= 0 && n < gws.length - 1) { n++; im.src = gws[(cur + 1) % gws.length] + im.src.slice(gws[cur].length); return; }
+      const w = document.createElement('div'); w.innerHTML = sigil(im.dataset.sig, im.dataset.lbl); im.replaceWith(w.firstChild);
+    });
+  });
 }
+
 export const rank = (e) => (daysSince(e.publishedAt) > 90 ? 'ANOMALY // SURVIVED A QUARTER' : 'PROVISIONAL INTERN');
 export const THREATS = ['Negligible', 'Low', 'Elevated', 'Revelatory', 'Severe', 'Unclassified'];
 export const CFG = CONFIG;

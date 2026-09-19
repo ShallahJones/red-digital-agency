@@ -20,7 +20,7 @@ export async function clearance() {
 }
 
 function draw() {
-  const live = CONFIG.API_BASE ? '' : `<p class="log" style="margin:0 0 18px;color:var(--holo)">TEST MODE: no server yet. You'll sign and get a packet to send by hand.</p>`;
+  const live = '';
   app().innerHTML = `<div class="view"><div class="eyebrow">Clearance</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Get cleared</h1>
   <p class="muted" style="max-width:62ch">Files are missing. Connect your wallet, pick a Dataleak, add yours. No transaction.</p>${live}
   <div id="stage"></div><div class="log ${C.logCls}" id="log" style="margin-top:14px">${esc(C.log)}</div></div>`;
@@ -28,7 +28,7 @@ function draw() {
 }
 
 function stage() {
-  const st = $('#stage');
+  const st = $('#stage'); if (!C.session) ambient('');
   if (!C.session) return connectStage(st);
   if (!C.sel) return pickStage(st);
   return formStage(st);
@@ -57,16 +57,34 @@ async function doConnect(key) {
 }
 
 function pickStage(st) {
+  if (C.held.length === 1 && !C.auto) { C.auto = true; C.sel = C.held[0]; return stage(); }
   const bar = `<div class="hd"><b>STEP II // SPECIMENS</b><span>${esc(C.session.name)} · ${esc(short(C.session.stake || ''))} · <a href="#" id="dc">disconnect</a></span></div>`;
   if (!C.held.length) { st.innerHTML = `<div class="panel">${bar}<h3 style="font-size:22px;margin-bottom:10px">No artifacts found</h3><p class="muted">The Department only clears the ones who were there. This wallet holds nothing from the Dataleak collection. If your asset sits in a different wallet, disconnect and try that one.</p><a class="btn" target="_blank" rel="noopener" href="${esc(CONFIG.WAYUP_URL)}">Find one on wayup ↗</a></div>`; $('#dc').onclick = disc; return; }
   setHolder(true);
   st.innerHTML = `<div class="panel">${bar}<p class="muted">Pick an asset. One file per asset, editable anytime.</p>
   <div class="picks">${C.held.map((h) => { const filed = S.entries.some((e) => e.unit === h.unit); return `<button class="pick" data-u="${esc(h.unit)}"><div class="img">${thumb(h.meta, h.unit, (h.meta && h.meta.name) || h.nameHex)}</div><span>${esc((h.meta && h.meta.name) || h.unit.slice(56, 72))}${filed ? ' · <b class="red">FILED</b>' : ''}</span></button>`; }).join('')}</div></div>`;
   armImages(st); $('#dc').onclick = disc;
+  { const first = C.held[0]; first && first.meta && first.meta.image && ambient(first.meta.image); }
+  $$('.pick', st).forEach((b) => { b.onmouseenter = () => { const h = C.held.find((x) => x.unit === b.dataset.u); h && h.meta && h.meta.image && ambient(h.meta.image); }; });
   $$('.pick', st).forEach((b) => (b.onclick = () => { C.sel = C.held.find((h) => h.unit === b.dataset.u); setLog(''); stage(); }));
 }
-function disc(ev) { ev && ev.preventDefault(); C.session = null; C.held = []; C.sel = null; setLog(''); draw(); }
+function disc(ev) { ev && ev.preventDefault(); C.session = null; C.held = []; C.sel = null; C.auto = false; setLog(''); draw(); }
 
+/* the page takes on the asset: loader sweep, card flip-in, faint backdrop */
+function runLoad(box) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  box.classList.add('flip'); const o = document.createElement('div'); o.className = 'ld2';
+  o.innerHTML = '<div class="tt2"><span>LOADING</span><i>∴</i><b>0%</b></div><div class="bar2"><div></div></div><div class="wr2">Do not turn off.</div>'; box.appendChild(o);
+  const bb = o.querySelector('b'), bar = o.querySelector('.bar2 div'), t0 = performance.now(), T = 1100; let gone = false;
+  const end = () => { if (gone) return; gone = true; o.style.opacity = 0; setTimeout(() => o.remove(), 500); };
+  (function f(t) { if (gone) return; const k = Math.min(1, (t - t0) / T); bb.textContent = Math.round(k * 100) + '%'; bar.style.width = k * 100 + '%'; k < 1 ? requestAnimationFrame(f) : end(); })(t0);
+  setTimeout(end, T + 1200);
+}
+function ambient(src) {
+  let a = $('#amb'); if (!src) { a && a.remove(); return; }
+  if (!a) { a = document.createElement('div'); a.id = 'amb'; document.body.appendChild(a); }
+  a.style.backgroundImage = `url("${src.replace(/"/g, '%22')}")`; requestAnimationFrame(() => a.classList.add('on'));
+}
 function formStage(st) {
   const a = C.sel, m = a.meta || {};
   const existing = S.entries.find((e) => e.unit === a.unit);
@@ -84,14 +102,14 @@ function formStage(st) {
   ${m.poolpm ? `<p class="muted" style="font-size:12px;margin-top:10px"><a target="_blank" rel="noopener" href="${esc(m.poolpm)}">pool.pm ↗</a> · <a target="_blank" rel="noopener" href="${esc(m.scan)}">cardanoscan ↗</a></p>` : ''}</div>
   <div style="margin-top:18px" id="pv"></div></div>
   <div class="panel hot"><div class="hd"><b>STEP III // REVIEW &amp; SIGN</b><span>${existing ? 'UPDATING EXISTING FILE' : 'NEW FILE'}</span></div>
-  <p class="muted" style="margin-bottom:16px">Filed straight from the asset's own metadata. Nothing to fill in.</p>
+  <p class="muted" style="margin-bottom:16px">Filed straight from the asset's own metadata.</p>
   <dl class="kv dos">${rows.map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`).join('')}${flat.length ? `<dt>Traits</dt><dd>${flat.slice(0, 16).map(([k, v]) => `<span class="muted">${esc(k)}</span> ${esc(v)}`).join('<br>')}</dd>` : ''}</dl>
   ${m.raw ? '' : '<p class="log err" style="margin-top:14px">No on-chain metadata found for this asset. Only its name will be filed.</p>'}
   <form class="f" id="form" autocomplete="off" style="margin-top:22px">
     <label class="chk"><input type="checkbox" id="consent"><span>I understand that signing makes this entry <b>public</b> in the Dossier. My wallet appears only as a shortened stake ID. I can retract it any time.</span></label>
     <div style="display:flex;gap:12px;flex-wrap:wrap"><button class="btn" id="go" type="submit" disabled>Sign &amp; file ▸</button>${existing ? '<button class="btn ghost" type="button" id="ret">Retract my file</button>' : ''}</div>
     <div id="out"></div></form></div></div>`;
-  armImages(st);
+  armImages(st); runLoad($('.spec', st)); ambient(m.image && !/^data:text/.test(m.image) ? m.image : '');
   $('#back').onclick = (ev) => { ev.preventDefault(); C.sel = null; stage(); };
   const read = () => cut({ ...auto });
   const preview = (d) => { const ent = { unit: a.unit, callsign: d.callsign, publishedAt: new Date().toISOString(), entry: d, meta: m }; $('#pv').innerHTML = `<div class="eyebrow" style="margin-bottom:10px">Public card preview</div><div style="max-width:260px">${cardHTML(ent).replace('href="#/agent/', 'tabindex="-1" data-x="')}</div>`; armImages($('#pv')); };
@@ -105,12 +123,12 @@ const msg = (action, unit, hash) => ['MADJACKET // DOAF CLEARANCE', 'Action: ' +
 
 async function file(a, entry, existing) {
   const go = $('#go'); go.disabled = true;
+  if (!CONFIG.API_BASE) { setLog('Filing is not live yet. Nothing was signed.', 'err'); go.disabled = false; return; }
   try {
     const hash = await sha256Hex(canonical(entry)), message = msg('PUBLISH', a.unit, hash);
     setLog('Waiting for your wallet to sign. Check the popup.');
     const sig = await signText(C.session, message);
     const packet = { unit: a.unit, message, entry, ...sig };
-    if (!CONFIG.API_BASE) return deadDrop(packet);
     setLog('Verifying signature and ownership…');
     const r = await submitEntry(packet);
     store.del('doaf-draft-' + a.unit);
@@ -121,13 +139,6 @@ async function file(a, entry, existing) {
     $('#bdg').onclick = () => downloadBadge(e, e.meta && e.meta.image);
     toast('Filed. You are now on the roster.');
   } catch (e) { setLog(e && (e.info || e.message) ? String(e.info || e.message) : 'Cancelled.', 'err'); go.disabled = false; }
-}
-
-function deadDrop(packet) {
-  const txt = JSON.stringify(packet, null, 2);
-  setLog('Signed. Nothing was sent anywhere.', 'ok');
-  $('#out').innerHTML = `<div class="panel" style="margin-top:8px"><div class="hd"><b>DEAD DROP</b><span>SIGNED PACKET</span></div><p class="muted">Send this to the Director (DM on X or Discord). It's signed by your wallet, so it can be verified and added to the dossier without trusting anyone.</p><textarea readonly style="min-height:150px;width:100%;font-size:11px;background:#060304;color:var(--steel);border:1px solid var(--line2);padding:10px" id="pk">${esc(txt)}</textarea><p style="margin-top:12px"><button type="button" class="btn ghost" id="cpk">Copy packet</button></p></div>`;
-  $('#cpk').onclick = () => navigator.clipboard.writeText(txt).then(() => toast('Packet copied'), () => { $('#pk').select(); toast('Select and copy'); });
 }
 
 async function retract(a) {

@@ -91,13 +91,13 @@ function formStage(st) {
   const cut = (o) => { Object.keys(o).forEach((k) => { if (LIM[k]) o[k] = String(o[k] || '').slice(0, LIM[k]); }); return o; };
   const flat = Object.entries({ ...(m.extra || {}), ...(m.attributes || {}) }).map(([k, v]) => [k, typeof v === 'object' ? JSON.stringify(v) : String(Array.isArray(v) ? v.join('') : v)]).filter(([, v]) => v);
   /* everything below comes from the asset itself: name, description, traits */
-  const auto = cut({ subject: '', rsi: '', backstory: '', knownFor: '', status: '', markers: '', threat: 'Unclassified', ...prefillFromMeta({ ...m }), callsign: m.name || m.ascii || 'Unnamed' });
+  const auto = cut({ subject: '', rsi: '', backstory: '', knownFor: '', status: '', markers: '', message: '', report: '', handle: '', threat: 'Unclassified', ...prefillFromMeta({ ...m }), callsign: m.name || m.ascii || 'Unnamed' });
   if (!auto.markers && flat.length) auto.markers = flat.map(([k, v]) => k + ': ' + v).join(' · ').slice(0, LIM.markers);
   if (!auto.backstory && m.description) auto.backstory = String(m.description).slice(0, LIM.backstory);
   if (!THREATS.includes(auto.threat)) auto.threat = 'Unclassified';
   const rows = [['Callsign', auto.callsign], ['Subject', auto.subject], ['Backstory', auto.backstory || auto.rsi]].filter(([, v]) => v);
   st.innerHTML = `<div class="grid" style="grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:24px" id="fg">
-  <div><div class="panel"><div class="hd"><b>SPECIMEN</b><a href="#" id="back">◂ change</a></div><div class="spec" style="aspect-ratio:1;position:relative">${specimen(m, a.unit, m.name || 'specimen')}</div>
+  <div><div class="panel"><div class="hd"><b>&nbsp;</b><a href="#" id="back">◂ change</a></div><div class="spec" style="aspect-ratio:1;position:relative">${specimen(m, a.unit, m.name || '')}</div>
   <h3 style="font-size:18px;margin:14px 0 6px">${esc(m.name || 'Unnamed artifact')}</h3>
   ${m.poolpm ? `<p class="muted" style="font-size:12px;margin-top:10px"><a target="_blank" rel="noopener" href="${esc(m.poolpm)}">pool.pm ↗</a> · <a target="_blank" rel="noopener" href="${esc(m.scan)}">cardanoscan ↗</a></p>` : ''}</div>
   <div style="margin-top:18px" id="pv"></div></div>

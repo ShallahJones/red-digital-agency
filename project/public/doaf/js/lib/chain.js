@@ -44,12 +44,20 @@ export function normalizeAsset(info) {
 
 export async function fetchAssetInfo(pairs) {
   if (!pairs.length) return {};
-  const res = await fetch(CONFIG.KOIOS_BASE + '/asset_info', {
-    method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' },
-    body: JSON.stringify({ _asset_list: pairs.map((p) => [p.policy, p.nameHex]) }),
-  });
-  if (!res.ok) throw new Error('Chain lookup failed (' + res.status + ')');
-  const arr = await res.json();
+  let arr = null; const body = pairs.map((p) => [p.policy, p.nameHex]);
+  /* Koios blocks browser calls from our domain (CORS), so ask the Worker first */
+  if (CONFIG.API_BASE) {
+    try {
+      const res = await fetch(CONFIG.API_BASE.replace(/\/$/, '') + '/v1/asset-info', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ assets: body }) });
+      if (res.ok) arr = await res.json();
+    } catch { /* fall through */ }
+  }
+  if (!arr || !arr.length) {
+    const res = await fetch(CONFIG.KOIOS_BASE + '/asset_info', { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json' }, body: JSON.stringify({ _asset_list: body }) });
+    if (!res.ok) throw new Error('Chain lookup failed (' + res.status + ')');
+    arr = await res.json();
+  }
+  if (!arr) throw new Error('Chain lookup failed');
   const map = {};
   for (const i of arr) { const n = normalizeAsset(i); map[n.unit] = n; }
   return map;

@@ -1,11 +1,26 @@
 {
   "redirects": [
-    { "source": "/doaf", "destination": "/doaf/", "permanent": false }
+    {
+      "source": "/doaf",
+      "destination": "/doaf/",
+      "permanent": false
+    }
   ],
   "rewrites": [
     {
       "source": "/((?!api/|doaf/).*)",
       "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/doaf/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
     }
   ]
 }

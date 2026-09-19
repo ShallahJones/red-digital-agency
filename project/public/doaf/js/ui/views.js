@@ -49,7 +49,7 @@ export function home() {
   app().innerHTML = `<div class="view">
   <section class="hero"><div>
     <div class="eyebrow">Cortex City Governance · Civilian Auxiliary</div>
-    <h1 class="glitch" data-t="Department of Anti-Fuckery">Department of <span>Anti-Fuckery</span></h1>
+    <h1 class="glitch" data-t="Department of Anti-Fuckery">Department of <span class="gl" data-g="Anti-Fuckery">Anti-Fuckery</span></h1>
     <p class="lede">The Dataleak's files are missing. Holders are piecing them back together.</p>
     
     <div class="ctas"><a class="btn" href="#/file">Start the file ▸</a><a class="btn ghost" href="#/clearance">Get cleared</a></div>

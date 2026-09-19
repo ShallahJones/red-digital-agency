@@ -278,3 +278,12 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .portrait .a,.portrait .b{display:block}
 .portrait .a>*,.portrait .b>*{position:absolute;inset:0;width:100%;height:100%;max-width:none;margin:0;padding:0;border:0;aspect-ratio:auto}
 .portrait img,.portrait svg{width:100%;height:100%;object-fit:contain;display:block}
+/* Anti-Fuckery: rare, subtle glitch (~0.9s burst every ~11s) */
+.hero h1 .gl{position:relative;animation:glj 11s steps(1,end) infinite}
+.hero h1 .gl::before,.hero h1 .gl::after{content:attr(data-g);position:absolute;inset:0;pointer-events:none;opacity:0}
+.hero h1 .gl::before{color:#d24b4b;animation:gla 11s steps(1,end) infinite}
+.hero h1 .gl::after{color:#6fb6a8;animation:glb 11s steps(1,end) infinite}
+@keyframes glj{0%,86%,100%{transform:none}87%{transform:translateX(-2px)}88%{transform:translateX(3px) skewX(-4deg)}89%{transform:none}91%{transform:translateX(2px)}92%{transform:none}94%{transform:translateX(-1px) skewX(3deg)}95%{transform:none}}
+@keyframes gla{0%,86%,100%{opacity:0}87%{opacity:.8;transform:translate(-3px,0);clip-path:inset(12% 0 58% 0)}88%{opacity:.8;transform:translate(3px,0);clip-path:inset(60% 0 8% 0)}89%{opacity:0}91%{opacity:.7;transform:translate(-2px,0);clip-path:inset(35% 0 35% 0)}92%{opacity:0}94%{opacity:.7;transform:translate(2px,0);clip-path:inset(5% 0 75% 0)}95%{opacity:0}}
+@keyframes glb{0%,86%,100%{opacity:0}87%{opacity:.7;transform:translate(3px,0);clip-path:inset(55% 0 15% 0)}88%{opacity:.7;transform:translate(-3px,0);clip-path:inset(10% 0 62% 0)}89%{opacity:0}91%{opacity:.6;transform:translate(2px,0);clip-path:inset(70% 0 5% 0)}92%{opacity:0}94%{opacity:.6;transform:translate(-2px,0);clip-path:inset(30% 0 40% 0)}95%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.hero h1 .gl,.hero h1 .gl::before,.hero h1 .gl::after{animation:none}}

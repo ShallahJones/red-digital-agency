@@ -178,10 +178,26 @@ function mountComic(e, p) {
     <div class="cwin" id="cwin"><div class="poster" id="cposter">${poster}<button class="btn cplay" id="cplay" type="button">▶ Open the comic</button></div></div>
     <p class="muted" style="font-size:12px;margin:12px 0 0;display:flex;gap:16px;flex-wrap:wrap"><button class="btn ghost" id="cfs" type="button" hidden>Fullscreen</button><a target="_blank" rel="noopener" href="${esc(pm)}">Open on pool.pm ↗</a></p></section>`);
   armImages($('#comic'));
-  const open = () => {
-    const w = $('#cwin'); if (!w || w.querySelector('iframe')) return;
-    w.innerHTML = `<iframe title="${esc(e.callsign)} — interactive comic" sandbox="allow-scripts" allow="fullscreen" allowfullscreen referrerpolicy="no-referrer" src="${esc(src)}"></iframe>`;
+  const open = async () => {
+    const w = $('#cwin'); if (!w || w.dataset.on) return; w.dataset.on = '1';
+    const say = (t) => { w.innerHTML = `<div class="cmsg">${t}</div>`; };
+    const frame = (attrs) => { w.innerHTML = `<iframe title="${esc(e.callsign)} — interactive comic" sandbox="allow-scripts" allow="fullscreen" referrerpolicy="no-referrer" ${attrs}></iframe>`; return w.querySelector('iframe'); };
     const fs = $('#cfs'); if (fs) { fs.hidden = false; fs.onclick = () => { const f = w.requestFullscreen || w.webkitRequestFullscreen; f && f.call(w).catch(() => {}); }; }
+    if (/^data:text\/html/i.test(m.htmlSrc)) { frame(`src="${esc(m.htmlSrc)}"`); return; }
+    const cm = typeof m.htmlSrc === 'string' && m.htmlSrc.match(CID_RE);
+    if (!cm || !CONFIG.API_BASE) { frame(`src="${esc(src)}"`); return; }
+    say('LOADING ∴ fetching the page…');
+    try {
+      const r = await fetch(CONFIG.API_BASE + '/v1/html/' + cm[1]); if (!r.ok) throw new Error('http ' + r.status);
+      let h = await r.text();
+      const gw = CONFIG.IPFS_GATEWAYS[0], base = gw + cm[1].replace(/[^/]*$/, ''); /* relative links resolve against the same IPFS folder */
+      h = h.replace(/ipfs:\/\/(?:ipfs\/)?/gi, gw);
+      const tag = `<base href="${base}">`;
+      if (/<head[^>]*>/i.test(h)) h = h.replace(/<head[^>]*>/i, (x) => x + tag);
+      else if (/^\s*<!doctype[^>]*>/i.test(h)) h = h.replace(/^\s*<!doctype[^>]*>/i, (x) => x + tag);
+      else h = tag + h;
+      const f = frame(''); f.srcdoc = h;
+    } catch (err) { w.dataset.on = ''; say('The comic would not load here. <a target="_blank" rel="noopener" href="' + esc(pm) + '">Open it on pool.pm ↗</a>'); }
   };
   $('#cplay').onclick = open; $('#cposter').onclick = (ev) => { if (ev.target.id !== 'cplay') open(); };
 }

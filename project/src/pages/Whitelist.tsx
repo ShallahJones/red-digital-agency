@@ -12,6 +12,15 @@ function saveAddr(a: string) {
   const l = getList(); if (!l.includes(a)) { l.push(a); localStorage.setItem(LOCAL_KEY, JSON.stringify(l)); }
 }
 function inList(a: string) { return getList().includes(a); }
+// Late arrivals (overflow past the 199 seats) are logged but NOT cleared, so they are tracked apart.
+const LATE_KEY = "mj_whitelist_late";
+function getLate(): string[] {
+  try { return JSON.parse(localStorage.getItem(LATE_KEY) || "[]"); } catch { return []; }
+}
+function saveLate(a: string) {
+  const l = getLate(); if (!l.includes(a)) { l.push(a); try { localStorage.setItem(LATE_KEY, JSON.stringify(l)); } catch { /* ignore */ } }
+}
+function isLate(a: string) { return getLate().includes(a); }
 function isValidAddr(a: string) {
   return /^0x[0-9a-fA-F]{40}$/.test(a) && isValidChecksum(a);
 }
@@ -68,6 +77,7 @@ export default function Whitelist() {
       setCounter((c) => (c ? { ...c, overflow: c.overflow + 1 } : c));
       setLoading(false);
       saveAddr(norm);
+      saveLate(norm);
       setRegStatus({ type: "success", lines: ["// SIGNAL LOGGED — LATE ARRIVAL", `${addr.slice(0,6)}...${addr.slice(-4)} filed.`, "The Cathedral's first 199 seats are already claimed. Your signal was received all the same.", "Watch @_madjacket."] });
       setRegAddr("");
       return;
@@ -107,7 +117,9 @@ export default function Whitelist() {
       return;
     }
     const norm = addr.toLowerCase();
-    if (inList(norm)) {
+    if (inList(norm) && isLate(norm)) {
+      setVerStatus({ type: "error", lines: ["// LATE ARRIVAL — NOT CLEARED", `${addr.slice(0,6)}...${addr.slice(-4)} is logged, but arrived after the first 199 seats were claimed.`, "No free-mint clearance. Watch @_madjacket."] });
+    } else if (inList(norm)) {
       setVerStatus({ type: "success", lines: ["// CONFIRMED — CLEARANCE ACTIVE", `${addr.slice(0,6)}...${addr.slice(-4)} is on the list.`, "MADJACKET × ROBINHOOD — CLEARANCE ACTIVE"] });
     } else {
       setVerStatus({ type: "error", lines: ["// NOT FOUND", `${addr.slice(0,6)}...${addr.slice(-4)} is not on the list.`, "Register above."] });

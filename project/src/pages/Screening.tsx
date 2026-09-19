@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const TARGET_UTC = Date.UTC(2026, 2, 27, 4, 0, 0);
+const TARGET_UTC = Date.UTC(2026, 8, 30, 21, 30, 0); // Sep 30 2026, 5:30 PM EDT (UTC-4)
 
 const GLITCH_CHARS = ['?', '¿', '‽', '⁇', '؟', '？'];
 
@@ -59,7 +59,7 @@ export default function Screening() {
             <div className="seat">
               <div>STATUS <b>{time.live ? "LIVE" : "RESERVED"}</b></div>
               <div>GATE <b>RED CATHEDRAL</b></div>
-              <div>TIME <b>?? ??? ?? 2026 · 9:00 PM ET</b></div>
+              <div>TIME <b>?? ??? ?? 2026 · 5:30 PM ET</b></div>
             </div>
           </div>
         </div>

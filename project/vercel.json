@@ -1,7 +1,10 @@
 {
+  "redirects": [
+    { "source": "/doaf", "destination": "/doaf/", "permanent": false }
+  ],
   "rewrites": [
     {
-      "source": "/((?!api/).*)",
+      "source": "/((?!api/|doaf/).*)",
       "destination": "/index.html"
     }
   ]

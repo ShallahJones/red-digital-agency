@@ -1,0 +1,77 @@
+{
+ "chapters": [
+  {
+   "id": "000",
+   "title": "Mandate",
+   "class": "OPEN",
+   "tag": "WHAT THIS PLACE IS",
+   "body": [
+    "The Department of Anti-Fuckery doesn't fix things. It files them.",
+    "When the Signal hit Cortex City, minds started doing things the law couldn't classify. Somebody needed a drawer. This is the drawer.",
+    "Fuckery: control dressed up as care. Systems that run perfectly while hollowing out the people inside. Nothing gets erased. It just gets [[contained]]."
+   ]
+  },
+  {
+   "id": "001",
+   "title": "Origin of the Department",
+   "class": "OPEN",
+   "tag": "THE CLERK OF CHAOS",
+   "body": [
+    "Elian Redmark was a pattern auditor. Tired, brilliant, cynical. His thesis fit on a sticky note: the threat isn't the madness, it's how long it takes to explain it.",
+    "After the Post-Signal Crisis, nobody could categorize what was breaking the city. Redmark pitched one department for everything unexplainable. They laughed. Then a Metapsychotic Feedback Event nearly ended Cortex, and they approved it by morning.",
+    "He wrote the name across a memo after a 72-hour shift: [[DEPT. OF ANTI-FUCKERY]]. Council signed it unread.",
+    "He vanished in Beta District. Last words: \"Some things don't want to be filed.\""
+   ]
+  },
+  {
+   "id": "002",
+   "title": "Origin of Madjacket",
+   "class": "FIELD NOTES // BOXLORD",
+   "tag": "HOW IT STARTED",
+   "body": [
+    "I was good at the job. That was the problem.",
+    "Web3 hires your hands and forgets you have a head. I shipped what I was told and watched worse ideas with better titles take the credit.",
+    "I left clean. Then Madjacket went up: a ghost story about a city that reads your thoughts, told by a guy whose thoughts had been on the clock for years.",
+    "Later I said out loud what everyone in that building knew. It backfired. Doors closed. I was the guy who yelled fire and got blamed for the smoke. I'd do it again.",
+    "Then the lease ended. Eviction, a car full of hard drives, a childhood bedroom. A project I'd gone broke drawing for minted that week and kept the lights on. Overnight I was the boss, holding a gun when I'd only ever held a pencil.",
+    "The Dataleak is where it turned. Real wallets, real names, a ledger that can't be un-minted. It stopped being a side project and became a place with a door.",
+    "The Department has me down as an unsung hero. I have me down as [[Tuesday]]."
+   ]
+  },
+  {
+   "id": "003",
+   "title": "Case 0001: The Pretender",
+   "class": "RESTRICTED",
+   "tag": "LINEAGE DRIFT / COSMETIC AUTHORITY MIMICRY",
+   "body": [
+    "The Pretender wore a rebellion he hadn't earned. A metapsycho cracked the mask in seconds: a kid with a trust fund, borrowed swagger, and a phone that stopped believing in him mid-call.",
+    "He isn't dangerous because he's evil. He's dangerous because he almost passes.",
+    "Reviewer: [[████████ ██████]]. Recognized the pattern on sight. Did nothing.",
+    "The Department exists to study what happens after a society lets people like him rise. The silence is the inheritance."
+   ]
+  },
+  {
+   "id": "004",
+   "title": "Intake for New Arrivals",
+   "class": "WALK-IN BRIEFING",
+   "tag": "IF YOU CAME IN THROUGH A BROKERAGE APP",
+   "body": [
+    "Came in through a brokerage app? Sit down. Don't touch anything.",
+    "Madjacket is a cyber-noir comic set in Cortex City, where the Signal reads emotion and a few minds read back.",
+    "The Dataleak was the first thing to escape the fiction: a Cardano collection minted before most of you had a wallet. Its holders aren't customers. They were here first. That makes them staff."
+   ]
+  },
+  {
+   "id": "005",
+   "title": "Intern Handbook",
+   "class": "OPEN",
+   "tag": "PROVISIONAL, LIKE EVERYTHING",
+   "body": [
+    "Rank: Provisional Intern. Everyone starts here.",
+    "Perks: a badge (already peeling), a file with your name on it, the right to be wrong in public.",
+    "Most interns don't survive a quarter. The ones who do get flagged as anomalies.",
+    "Advancement: there's a form. It's filed under [[Advancement]]."
+   ]
+  }
+ ]
+}

@@ -1,5 +1,5 @@
 import { CONFIG } from '../config.js';
-import { loadEntries, loadLore } from '../lib/api.js';
+import { loadEntries, loadLore, loadSlots } from '../lib/api.js';
 import { safeAssetInfo, unitOf, splitUnit } from '../lib/chain.js';
 import { $, $$, esc, redactify, ago, daysSince, short, toast, thumb, specimen, armImages, rank, sigil, THREATS } from './util.js';
 import { mountNetwork } from './network.js';
@@ -7,7 +7,7 @@ import { downloadBadge } from './badge.js';
 import { mountRadio } from './radio.js';
 
 export const S = { entries: [], source: 'seed', lore: [], meta: {}, ready: null, cleanup: null };
-export function init() { S.ready = Promise.all([loadEntries(), loadLore()]).then(([e, l]) => { S.entries = e.entries; S.source = e.source; S.lore = l; }); return S.ready; }
+export function init() { S.ready = Promise.all([loadEntries(), loadLore(), loadSlots()]).then(([e, l]) => { S.entries = e.entries; S.source = e.source; S.lore = l; }); return S.ready; }
 const app = () => $('#app');
 
 function countUp(el) { const to = +el.dataset.to; if (matchMedia('(prefers-reduced-motion: reduce)').matches || !to) { el.textContent = to; return; } const t0 = performance.now(); (function f(t) { const k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0); }
@@ -16,6 +16,7 @@ export const cardHTML = (e, i = 0) => `<a class="card" href="#/agent/${esc(e.uni
   <span class="img">${thumb(e.meta, e.unit, e.callsign)}<span class="no">${String(i + 1).padStart(3, '0')}</span><span class="pill badge">${daysSince(e.publishedAt) > 90 ? 'ANOMALY' : 'INTERN'}</span></span>
   <span class="bd"><h3>${esc(e.callsign)}</h3><span class="sub">${esc(e.entry.rsi || e.entry.subject || '')}</span>
   <span class="row"><span>${esc(e.entry.threat || 'Unclassified')}</span><span>${ago(e.publishedAt)}</span></span></span></span></a>`;
+const slots = (n) => { const open = Math.max(0, (CONFIG.SLOTS || 0) - n); let h = ''; for (let i = 1; i <= open; i++) h += emptyCard(n + i); return h; };
 const emptyCard = (n) => `<a class="card empty" href="#/clearance"><span class="in"><span class="img">${String(n).padStart(3, '0')}</span><span class="bd"><h3>Open slot</h3><span class="sub">Link an asset to fill it.</span><span class="row"><span>Empty</span><span>Get cleared ▸</span></span></span></span></a>`;
 
 /* dossier modal: click a card, read the file without leaving the roster */
@@ -156,11 +157,12 @@ export function roster() {
     const q = $('#q').value.toLowerCase(), th = $('#th').value, so = $('#so').value;
     let l = S.entries.filter((e) => (!th || e.entry.threat === th) && (!q || JSON.stringify([e.callsign, e.entry]).toLowerCase().includes(q)));
     l = [...l].sort((a, b) => so === 'az' ? a.callsign.localeCompare(b.callsign) : so === 'old' ? (a.publishedAt || '').localeCompare(b.publishedAt || '') : (b.publishedAt || '').localeCompare(a.publishedAt || ''));
-    $('#ct').textContent = l.length + ' on file';
-    $('#rg').innerHTML = l.map(cardHTML).join('') + (q || th ? '' : [1, 2, 3, 4].map((i) => emptyCard(S.entries.length + i)).join(''));
+    $('#ct').textContent = l.length + ' on file' + (CONFIG.SLOTS ? ' · ' + Math.max(0, CONFIG.SLOTS - S.entries.length) + ' open of ' + CONFIG.SLOTS : '');
+    $('#rg').innerHTML = l.map(cardHTML).join('') + (q || th ? '' : slots(S.entries.length));
     armImages($('#rg'));
   };
   ['q', 'th', 'so'].forEach((i) => ($('#' + i).oninput = draw)); draw();
+  const tick = setInterval(async () => { if (!$('#rg')) return clearInterval(tick); try { const r = await loadEntries(); S.entries = r.entries; } catch {} if ($('#rg') && document.activeElement.id !== 'q') draw(); }, 30000);
 }
 
 /* ───────────── AGENT ───────────── */

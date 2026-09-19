@@ -125,9 +125,10 @@ async function file(a, entry, existing) {
     store.del('doaf-draft-' + a.unit);
     const e = r.entry; S.entries = [e, ...S.entries.filter((x) => x.unit !== e.unit)];
     setLog('');
-    $('#out').innerHTML = `<div class="panel hot" style="margin-top:8px"><div class="hd"><b>FILED</b><span>PUBLIC</span></div><p class="eyebrow" style="margin-bottom:12px">Cleared</p><p>Welcome, Intern. Signal unlocked: Madjacket FM, holder channel.</p><p style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="#/agent/${esc(e.unit)}">View my file ▸</a><button class="btn ghost" type="button" id="bdg">Download badge</button></p></div>`;
+    $('#out').innerHTML = `<div class="panel hot" style="margin-top:8px"><div class="hd"><b>FILED</b><span>PUBLIC</span></div><p class="eyebrow" style="margin-bottom:12px">Cleared</p><p>Welcome, Intern. Signal unlocked: Madjacket FM, holder channel.</p><p style="display:flex;gap:12px;flex-wrap:wrap"><a class="btn" href="#/agent/${esc(e.unit)}">View my file ▸</a><button class="btn ghost" type="button" id="another">File another</button><button class="btn ghost" type="button" id="bdg">Download badge</button></p></div>`;
     $('#out').insertAdjacentHTML('beforeend', '<div id="rd-ok" style="margin-top:18px"></div>'); mountRadio($('#rd-ok'));
     runLoad($('#out .panel'));
+    { const an = $('#another'); if (an) an.onclick = () => { C.sel = null; C.auto = true; setLog(''); stage(); }; }
     $('#bdg').onclick = () => downloadBadge(e, e.meta && e.meta.image);
     toast('Filed. You are now on the roster.');
   } catch (e) { setLog(e && (e.info || e.message) ? String(e.info || e.message) : 'Cancelled.', 'err'); go.disabled = false; }

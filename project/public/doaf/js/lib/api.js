@@ -29,5 +29,6 @@ async function post(path, body) {
   if (!r.ok) throw new Error(t.error || 'Request failed (' + r.status + ')');
   return t;
 }
+export async function loadSlots() { try { const r = await getJson(CONFIG.API_BASE.replace(/\/$/, '') + '/v1/collection'); if (r && r.count > 0) CONFIG.SLOTS = r.count; } catch {} return CONFIG.SLOTS; }
 export const submitEntry = (packet) => post('/v1/entries', packet);
 export const retractEntry = (packet) => post('/v1/retract', packet);

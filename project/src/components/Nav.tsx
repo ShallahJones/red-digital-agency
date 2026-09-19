@@ -14,6 +14,7 @@ export default function Nav() {
         <NavLink to="/dataleak" className={({ isActive }) => isActive ? "active-nav" : ""}>DATALEAK</NavLink>
         <NavLink to="/red-pages" className={({ isActive }) => isActive ? "active-nav" : ""}>RED STRIPS</NavLink>
         <NavLink to="/whitelist" className={({ isActive }) => isActive ? "active-nav" : ""}>CLEARANCE</NavLink>
+        <a href="/doaf/">DOAF</a>
         <a href="#" onClick={(e) => { e.preventDefault(); openScanner(null); }}>SCAN</a>
       </div>
     </nav>

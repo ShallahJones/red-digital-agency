@@ -27,11 +27,11 @@ async function route() {
   scrollTo(0, 0);
   ({ radio: () => { $('#app').innerHTML = `<div class="view"><div class="eyebrow">Radio</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Madjacket FM</h1><p class="muted" style="max-width:60ch">Broadcasting from Cortex City. Open to everyone.</p><div id="rd" style="margin-top:22px;max-width:760px"></div></div>`; S.cleanup = mountRadio($('#rd')); }, file: () => file(b), roster, agent: () => agent(decodeURIComponent(b || '')), clearance }[a] || home)();
 }
-const LINES = ['Initializing system . . .', 'Waking the Signal . . .', 'Verifying clearance . . .', 'Sweeping for Dataleak artifacts . . .', 'Filing the unfileable . . .', 'Redacting things . . .', 'Establishing secure connection . . .', 'Opening the drawer . . .'];
+const LINES = ['Initializing system . . .', 'Waking the system . . .', 'Verifying clearance . . .', 'Sweeping for Dataleak artifacts . . .', 'Filing the unfileable . . .', 'Redacting things . . .', 'Establishing secure connection . . .', 'Opening the drawer . . .'];
 function boot() {
   const el = $('#boot'); let seen = false; try { seen = sessionStorage.getItem('doaf-boot'); } catch {}
   if (seen || matchMedia('(prefers-reduced-motion: reduce)').matches) return el.remove();
-  el.innerHTML = `<div class="ld"><div class="tt"><span>LOADING</span><i>∴</i><b id="bp">0%</b></div><div class="bar"><div id="bb"></div></div><div class="warn"><i>!</i>Caution. Do not turn off the Signal.</div><pre id="bootlog"></pre></div><button class="skip" id="bootskip">ENTER ▸</button>`;
+  el.innerHTML = `<div class="ld"><div class="tt"><span>LOADING</span><i>∴</i><b id="bp">0%</b></div><div class="bar"><div id="bb"></div></div><div class="warn"><i>!</i>Do not turn off.</div><pre id="bootlog"></pre></div><button class="skip" id="bootskip">ENTER ▸</button>`;
   let done = false, shown = 0; const T = 3400, t0 = performance.now();
   const end = () => { if (done) return; done = true; try { sessionStorage.setItem('doaf-boot', '1'); } catch {} el.classList.add('gone'); setTimeout(() => el.remove(), 800); };
   $('#bootskip').onclick = end; el.onclick = end; setTimeout(end, T + 1500); /* failsafe: the loader always lets you in */

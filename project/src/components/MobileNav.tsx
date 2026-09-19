@@ -41,6 +41,7 @@ export default function MobileNav() {
             <NavLink to="/screening" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>SCREENING</NavLink>
             <NavLink to="/dataleak" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>DATALEAK</NavLink>
             <NavLink to="/red-pages" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>RED STRIPS</NavLink>
+            <a className="mob-link" href="/doaf/">DOAF</a>
             <button className="mob-link mob-scan-btn" onClick={() => { setOpen(false); openScanner(null); }}>SCAN</button>
           </nav>
         </div>

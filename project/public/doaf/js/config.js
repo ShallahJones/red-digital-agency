@@ -14,7 +14,7 @@ export const CONFIG = {
   },
 
   // URL of your deployed Worker (see /worker). Leave '' to run in DEAD-DROP mode (packets copied by hand).
-  API_BASE: '',
+  API_BASE: 'https://doaf-api.madjacket.workers.dev',
 
   // Chain data. Koios is free and CORS-open. Swap for your own key/proxy if you like.
   KOIOS_BASE: 'https://api.koios.rest/api/v1',

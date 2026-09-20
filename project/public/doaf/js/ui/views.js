@@ -169,8 +169,9 @@ function buildRows() {
   S.entries.forEach((f) => { if (!seen.has(f.unit)) add(null, f); });
   return rows;
 }
+let rosterRun = 0;
 export function roster() {
-  const DEF = 'filed', st = { q: '', themes: new Set(), show: DEF, so: 'dl' }; let rows = [];
+  const run = ++rosterRun, DEF = 'filed', st = { q: '', themes: new Set(), show: DEF, so: 'dl' }; let rows = [];
   app().innerHTML = `<div class="view"><div class="eyebrow">Roster</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Cleared interns</h1><p class="muted" style="max-width:60ch">Every Dataleak in the collection, filed or not. Search the dossiers or browse by theme. Each file is written by a holder and verified on-chain.</p>
   <div class="tools"><input id="q" placeholder="Search name, look, backstory, $handle…" aria-label="Search roster" autocomplete="off"><select id="so" aria-label="Sort"><option value="dl">Collection order</option><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select><button class="btn ghost" id="clr" type="button" hidden>Clear</button><span class="muted" id="ct"></span><select id="sh" class="far" aria-label="Show"><option value="filed" selected>Filed files</option><option value="unfiled">Not yet filed</option><option value="all">Everything</option></select></div>
   <div class="chips" id="chips" role="group" aria-label="Themes"></div>
@@ -196,7 +197,8 @@ export function roster() {
     armImages($('#rg'));
   };
   rows = buildRows(); chips(); $('#q').oninput = (e) => { st.q = e.target.value; draw(); }; $('#so').onchange = (e) => { st.so = e.target.value; draw(); }; $('#sh').onchange = (e) => { st.show = e.target.value; draw(); }; $('#clr').onclick = clearAll; draw();
-  const tick = setInterval(async () => { if (!$('#rg')) return clearInterval(tick); try { const [r, c] = await Promise.all([loadEntries(), loadCatalog()]); S.entries = r.entries; if (c.length) S.catalog = c; } catch {} if ($('#rg') && document.activeElement.id !== 'q') { rows = buildRows(); chips(); draw(); } }, 30000);
+  const tick = setInterval(async () => { if (!$('#rg') || run !== rosterRun) return clearInterval(tick); try { const [r, c] = await Promise.all([loadEntries(), loadCatalog()]); S.entries = r.entries; if (c.length) S.catalog = c; } catch {} if ($('#rg') && run === rosterRun && document.activeElement.id !== 'q') { rows = buildRows(); chips(); draw(); } }, 30000);
+  S.cleanup = () => clearInterval(tick);
 }
 
 /* ───────────── AGENT ───────────── */

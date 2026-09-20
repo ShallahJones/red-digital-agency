@@ -1,3 +1,10 @@
 {
- "tracks": []
+ "tracks": [
+  {
+   "id": "mad-alchemy",
+   "title": "Mad Alchemy",
+   "artist": "Boxlord",
+   "src": "assets/mad-alchemy.mp3"
+  }
+ ]
 }

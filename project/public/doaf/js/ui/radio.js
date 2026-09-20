@@ -7,7 +7,9 @@ const ls = { get: (k) => { try { return localStorage.getItem(k); } catch { retur
 try { R.liked = new Set(JSON.parse(ls.get('doaf-liked') || '[]')); R.holder = ls.get('doaf-holder') === '1'; R.vol = +(ls.get('doaf-vol') || 0.7); } catch {}
 
 const GEN = { id: 'gen', title: 'SIGNAL // 01', artist: 'Cortex City Transmission', gen: true };
-export const list = () => [GEN, ...R.tracks.filter((t) => !t.holders || R.holder)];
+/* Real tracks first (in tracks.json order); the generated signal only plays when there are none, or after them. */
+export const list = () => [...R.tracks.filter((t) => !t.holders || R.holder), GEN];
+const credit = (t) => (t.gen || !t.artist ? t.title : t.artist + ' – ' + t.title);
 const cur = () => list()[R.i] || GEN;
 const emit = () => R.subs.forEach((f) => f());
 
@@ -44,7 +46,7 @@ export function next(skipBad) { const n = list().length; if (skipBad && n === 1)
 export const prev = () => go(R.i - 1);
 export function vol(v) { R.vol = v; ls.set('doaf-vol', String(v)); if (R.audio) R.audio.volume = v; if (R.genOut) R.genOut.gain.value = v * 0.5; }
 export function like() { const id = cur().id; R.liked.has(id) ? R.liked.delete(id) : R.liked.add(id); ls.set('doaf-liked', JSON.stringify([...R.liked])); emit(); }
-export const nowPlaying = () => (R.playing ? cur().title : '');
+export const nowPlaying = () => (R.playing ? credit(cur()) : '');
 export const onChange = (f) => (R.subs.add(f), () => R.subs.delete(f));
 
 const fmt = (s) => (isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--');
@@ -80,7 +82,7 @@ export function mountRadio(el, { compact = false } = {}) {
     const lk = R.liked.has(t.id); q('#rd-like').textContent = lk ? '♥' : '♡'; q('#rd-like').setAttribute('aria-pressed', lk);
     let f = 0, tm = 'LIVE'; if (!t.gen && R.audio) { const a = R.audio; f = a.duration ? a.currentTime / a.duration : 0; tm = fmt(a.currentTime) + ' / ' + fmt(a.duration); } else if (R.playing) { f = ((Date.now() - R.t0) / 1000 % 60) / 60; tm = 'LIVE'; }
     q('#rd-fill').style.width = f * 100 + '%'; q('#rd-time').textContent = tm;
-    q('#rd-list').innerHTML = L.map((x, i) => `<li><button class="${i === R.i ? 'on' : ''}" data-i="${i}"><span>${String(i + 1).padStart(2, '0')}</span>${esc(x.title)}${x.holders ? '<em>HOLDERS</em>' : ''}${R.liked.has(x.id) ? '<i>♥</i>' : ''}</button></li>`).join('');
+    q('#rd-list').innerHTML = L.map((x, i) => `<li><button class="${i === R.i ? 'on' : ''}" data-i="${i}"><span>${String(i + 1).padStart(2, '0')}</span>${esc(credit(x))}${x.holders ? '<em>HOLDERS</em>' : ''}${R.liked.has(x.id) ? '<i>♥</i>' : ''}</button></li>`).join('');
     $$('#rd-list button', el).forEach((b) => (b.onclick = () => { R.i = +b.dataset.i; go(R.i); play(); }));
     q('#rd-note').textContent = R.holder ? 'Holder channel unlocked.' : R.tracks.some((t) => t.holders) ? 'Link a Dataleak to unlock holder tracks.' : '';
   };

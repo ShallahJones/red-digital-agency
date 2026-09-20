@@ -312,11 +312,12 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 
 .tools .far{margin-left:auto}
 
-/* lyrics: faint teleprompter under the top bar, synced to the radio */
-#lyr{position:fixed;left:0;right:0;top:calc(46px + env(safe-area-inset-top,0px));z-index:40;height:calc(3 * 1.9em);font:400 15px/1.9 var(--f-m);letter-spacing:.08em;text-align:center;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1.2s ease;-webkit-mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent);mask-image:linear-gradient(transparent,#000 30%,#000 70%,transparent)}
+/* lyrics: faint teleprompter down the right edge, synced to the radio */
+#lyr{position:fixed;right:clamp(12px,2vw,32px);top:50%;transform:translateY(-50%);z-index:40;width:min(240px,18vw);height:min(56vh,420px);font:400 13px/1.55 var(--f-m);letter-spacing:.06em;text-align:right;overflow:hidden;pointer-events:none;opacity:0;transition:opacity 1.2s ease;-webkit-mask-image:linear-gradient(transparent,#000 28%,#000 72%,transparent);mask-image:linear-gradient(transparent,#000 28%,#000 72%,transparent)}
 #lyr.on{opacity:1}
-#lyr .lyr-in{transition:transform .8s cubic-bezier(.2,.7,.2,1);padding:0 16px}
-#lyr p{margin:0;height:1.9em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink);opacity:.04;transition:opacity .8s ease}
+#lyr .lyr-in{position:relative;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+#lyr p{margin:0;padding:.5em 0;color:var(--ink);opacity:.04;transition:opacity .8s ease}
 #lyr p.near{opacity:.07}
-#lyr p.cur{opacity:.16}
+#lyr p.cur{opacity:.17}
+@media (max-width:1100px){#lyr{display:none}}
 @media (prefers-reduced-motion:reduce){#lyr,#lyr .lyr-in,#lyr p{transition:none}}

@@ -79,8 +79,8 @@ function lyTick() {
     const now = R.audio.currentTime + LEAD; let i = -1; for (let k = 0; k < LY.lines.length && LY.lines[k].t <= now; k++) i = k;
     const shown = i >= 0 && now <= LY.ends[i] + LEAD;
     if (i !== LY.idx) {
-      LY.idx = i; const ps = LY.inner.children, lh = ps[0] ? ps[0].offsetHeight : 26;
-      LY.inner.style.transform = `translateY(${(1 - Math.max(i, 0)) * lh}px)`;
+      LY.idx = i; const ps = LY.inner.children, c = ps[Math.max(i, 0)];
+      if (c) LY.inner.style.transform = `translateY(${el.clientHeight / 2 - (c.offsetTop + c.offsetHeight / 2)}px)`;
       for (let k = 0; k < ps.length; k++) ps[k].className = k === i ? 'cur' : Math.abs(k - i) === 1 ? 'near' : '';
     }
     el.classList.toggle('on', shown);

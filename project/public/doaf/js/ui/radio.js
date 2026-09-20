@@ -9,7 +9,7 @@ try { R.liked = new Set(JSON.parse(ls.get('doaf-liked') || '[]')); R.holder = ls
 const GEN = { id: 'gen', title: 'SIGNAL // 01', artist: 'Cortex City Transmission', gen: true };
 /* Real tracks first (in tracks.json order); the generated signal only plays when there are none, or after them. */
 export const list = () => [...R.tracks.filter((t) => !t.holders || R.holder), GEN];
-const credit = (t) => (t.gen || !t.artist ? t.title : t.artist + ' – ' + t.title);
+const credit = (t) => t.title; /* track names show the title only; the artist has its own line in the player */
 const cur = () => list()[R.i] || GEN;
 const emit = () => R.subs.forEach((f) => f());
 
@@ -51,8 +51,8 @@ export const onChange = (f) => (R.subs.add(f), () => R.subs.delete(f));
 
 /* Lyrics: a very faint teleprompter at the top of every page, synced to the playing track.
    A track opts in with "lyrics": "assets/lyrics/<id>.json" → {"lines":[{"t":seconds,"text":"…"}]}. Edit t to retime a line. */
-const LY = { id: '', lines: [], ends: [], el: null, inner: null, idx: -2, on: false, raf: 0, cache: {} };
-const LEAD = 0.25;
+const LY = { id: '', lines: [], el: null, inner: null, idx: -2, on: false, raf: 0, cache: {} };
+const LAG = 0.15; /* never run ahead of the vocal: lines show a hair late, plus each track's own "lyricsOffset" (seconds, + = later) */
 function lyEl() {
   if (!LY.el) { const d = document.createElement('div'); d.id = 'lyr'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = '<div class="lyr-in"></div>'; document.body.appendChild(d); LY.el = d; LY.inner = d.firstChild; }
   return LY.el;
@@ -71,13 +71,12 @@ function lyTick() {
     LY.id = t.id; LY.lines = []; LY.idx = -2; LY.inner.innerHTML = '';
     lyLoad(t).then((lines) => {
       if (LY.id !== t.id) return; LY.lines = lines;
-      LY.ends = lines.map((l, i) => Math.min(i + 1 < lines.length ? lines[i + 1].t : Infinity, l.t + Math.max(2.2, 0.32 * l.text.split(/\s+/).length + 1.2)));
       LY.inner.innerHTML = lines.map((l) => `<p>${esc(l.text)}</p>`).join(''); LY.idx = -2;
     });
   }
   if (LY.lines.length) {
-    const now = R.audio.currentTime + LEAD; let i = -1; for (let k = 0; k < LY.lines.length && LY.lines[k].t <= now; k++) i = k;
-    const shown = i >= 0 && now <= LY.ends[i] + LEAD;
+    const now = R.audio.currentTime - LAG - (t.lyricsOffset || 0); let i = -1; for (let k = 0; k < LY.lines.length && LY.lines[k].t <= now; k++) i = k;
+    const shown = i >= 0; /* hold the current line through instrumental breaks until the next line starts */
     if (i !== LY.idx) {
       LY.idx = i; const ps = LY.inner.children, c = ps[Math.max(i, 0)];
       if (c) LY.inner.style.transform = `translateY(${el.clientHeight / 2 - (c.offsetTop + c.offsetHeight / 2)}px)`;

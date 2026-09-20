@@ -37,9 +37,9 @@ function audio() { if (!R.audio) { const a = (R.audio = new Audio()); a.preload 
 export function play() {
   const t = cur(); R.t0 = R.t0 || Date.now();
   if (t.gen) { audio().pause(); stopGen(); try { startGen(); } catch { return; } } else { stopGen(); const a = audio(); if (a.dataset.id !== t.id) { a.src = t.src; a.dataset.id = t.id; } a.volume = R.vol; a.play().catch(() => {}); }
-  R.playing = true; emit();
+  R.playing = true; emit(); lyStart();
 }
-export function pause() { stopGen(); R.audio && R.audio.pause(); R.playing = false; emit(); }
+export function pause() { stopGen(); R.audio && R.audio.pause(); R.playing = false; emit(); lyHide(); }
 export const toggle = () => (R.playing ? pause() : play());
 export function go(i) { const n = list().length; R.i = ((i % n) + n) % n; if (R.audio) { R.audio.pause(); R.audio.dataset.id = ''; } stopGen(); R.t0 = Date.now(); if (R.playing) play(); else emit(); }
 export function next(skipBad) { const n = list().length; if (skipBad && n === 1) return pause(); go(R.i + 1); }
@@ -48,6 +48,46 @@ export function vol(v) { R.vol = v; ls.set('doaf-vol', String(v)); if (R.audio) 
 export function like() { const id = cur().id; R.liked.has(id) ? R.liked.delete(id) : R.liked.add(id); ls.set('doaf-liked', JSON.stringify([...R.liked])); emit(); }
 export const nowPlaying = () => (R.playing ? credit(cur()) : '');
 export const onChange = (f) => (R.subs.add(f), () => R.subs.delete(f));
+
+/* Lyrics: a very faint teleprompter at the top of every page, synced to the playing track.
+   A track opts in with "lyrics": "assets/lyrics/<id>.json" → {"lines":[{"t":seconds,"text":"…"}]}. Edit t to retime a line. */
+const LY = { id: '', lines: [], ends: [], el: null, inner: null, idx: -2, on: false, raf: 0, cache: {} };
+const LEAD = 0.25;
+function lyEl() {
+  if (!LY.el) { const d = document.createElement('div'); d.id = 'lyr'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = '<div class="lyr-in"></div>'; document.body.appendChild(d); LY.el = d; LY.inner = d.firstChild; }
+  return LY.el;
+}
+async function lyLoad(t) {
+  if (!t.lyrics) return [];
+  if (!(t.id in LY.cache)) { try { const r = await fetch(t.lyrics); LY.cache[t.id] = r.ok ? ((await r.json()).lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t) : []; } catch { LY.cache[t.id] = []; } }
+  return LY.cache[t.id];
+}
+function lyHide() { if (LY.el) LY.el.classList.remove('on'); }
+function lyTick() {
+  LY.raf = 0; const t = cur();
+  if (!R.playing || t.gen || !R.audio || !t.lyrics) { lyHide(); return; }
+  const el = lyEl();
+  if (LY.id !== t.id) {
+    LY.id = t.id; LY.lines = []; LY.idx = -2; LY.inner.innerHTML = '';
+    lyLoad(t).then((lines) => {
+      if (LY.id !== t.id) return; LY.lines = lines;
+      LY.ends = lines.map((l, i) => Math.min(i + 1 < lines.length ? lines[i + 1].t : Infinity, l.t + Math.max(2.2, 0.32 * l.text.split(/\s+/).length + 1.2)));
+      LY.inner.innerHTML = lines.map((l) => `<p>${esc(l.text)}</p>`).join(''); LY.idx = -2;
+    });
+  }
+  if (LY.lines.length) {
+    const now = R.audio.currentTime + LEAD; let i = -1; for (let k = 0; k < LY.lines.length && LY.lines[k].t <= now; k++) i = k;
+    const shown = i >= 0 && now <= LY.ends[i] + LEAD;
+    if (i !== LY.idx) {
+      LY.idx = i; const ps = LY.inner.children, lh = ps[0] ? ps[0].offsetHeight : 26;
+      LY.inner.style.transform = `translateY(${(1 - Math.max(i, 0)) * lh}px)`;
+      for (let k = 0; k < ps.length; k++) ps[k].className = k === i ? 'cur' : Math.abs(k - i) === 1 ? 'near' : '';
+    }
+    el.classList.toggle('on', shown);
+  }
+  LY.raf = requestAnimationFrame(lyTick);
+}
+function lyStart() { if (!LY.raf) LY.raf = requestAnimationFrame(lyTick); }
 
 const fmt = (s) => (isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '--:--');
 

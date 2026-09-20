@@ -298,3 +298,14 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .cwin:fullscreen{width:100%;height:100%;border:0}
 .cwin .cmsg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;color:var(--mute);letter-spacing:.14em;font-size:12px;text-transform:uppercase}
 .cwin .cmsg a{margin-left:8px}
+
+/* roster facets */
+.tools input{max-width:320px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:-8px 0 24px}
+.chip{background:transparent;color:var(--mute);border:1px solid var(--line);padding:6px 11px;font:11px var(--f-m);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;border-radius:0}
+.chip i{font-style:normal;opacity:.6;margin-left:4px}
+.chip:hover{color:var(--ink);border-color:var(--acc-d)}
+.chip[aria-pressed="true"]{color:var(--ink);border-color:var(--acc);background:var(--panel)}
+.chip:focus-visible{outline:1px solid var(--acc);outline-offset:2px}
+.card.unfiled .img{filter:saturate(.72)}
+.card.unfiled .pill.badge{color:var(--mute)}

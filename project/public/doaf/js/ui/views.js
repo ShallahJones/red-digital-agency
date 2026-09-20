@@ -1,19 +1,19 @@
 import { CONFIG } from '../config.js';
-import { loadEntries, loadLore, loadSlots } from '../lib/api.js';
+import { loadEntries, loadLore, loadSlots, loadCatalog } from '../lib/api.js';
 import { safeAssetInfo, unitOf, splitUnit } from '../lib/chain.js';
 import { $, $$, esc, redactify, ago, daysSince, short, toast, thumb, specimen, armImages, rank, sigil, THREATS } from './util.js';
 import { mountNetwork } from './network.js';
 import { downloadBadge } from './badge.js';
 import { mountRadio } from './radio.js';
 
-export const S = { entries: [], source: 'seed', lore: [], meta: {}, ready: null, cleanup: null };
-export function init() { S.ready = Promise.all([loadEntries(), loadLore(), loadSlots()]).then(([e, l]) => { S.entries = e.entries; S.source = e.source; S.lore = l; }); return S.ready; }
+export const S = { entries: [], catalog: [], source: 'seed', lore: [], meta: {}, ready: null, cleanup: null };
+export function init() { S.ready = Promise.all([loadEntries(), loadLore(), loadSlots(), loadCatalog()]).then(([e, l, , c]) => { S.entries = e.entries; S.source = e.source; S.lore = l; S.catalog = c; if (c.length) CONFIG.SLOTS = c.length; }); return S.ready; }
 const app = () => $('#app');
 
 function countUp(el) { const to = +el.dataset.to; if (matchMedia('(prefers-reduced-motion: reduce)').matches || !to) { el.textContent = to; return; } const t0 = performance.now(); (function f(t) { const k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0); }
 
-export const cardHTML = (e, i = 0) => `<a class="card" href="#/agent/${esc(e.unit)}" data-u="${esc(e.unit)}"><span class="in">
-  <span class="img">${thumb(e.meta, e.unit, e.callsign)}<span class="no">${String(i + 1).padStart(3, '0')}</span><span class="pill badge">${daysSince(e.publishedAt) > 90 ? 'ANOMALY' : 'INTERN'}</span></span>
+export const cardHTML = (e, i = 0, no = null) => `<a class="card" href="#/agent/${esc(e.unit)}" data-u="${esc(e.unit)}"><span class="in">
+  <span class="img">${thumb(e.meta, e.unit, e.callsign)}<span class="no">${String(no != null ? no : i + 1).padStart(3, '0')}</span><span class="pill badge">${daysSince(e.publishedAt) > 90 ? 'ANOMALY' : 'INTERN'}</span></span>
   <span class="bd"><h3>${esc(e.callsign)}</h3><span class="sub">${esc(e.entry.rsi || e.entry.subject || '')}</span>
   <span class="row"><span>${esc(e.entry.threat || 'Unclassified')}</span><span>${ago(e.publishedAt)}</span></span></span></span></a>`;
 const slots = (n) => { const open = Math.max(0, (CONFIG.SLOTS || 0) - n); let h = ''; for (let i = 1; i <= open; i++) h += emptyCard(n + i); return h; };
@@ -149,20 +149,76 @@ export function file(param) {
 }
 
 /* ───────────── ROSTER ───────────── */
+const tagOf = (h) => { const s = String(h || '').replace(/^[@$\s]+/, '').trim(); return s ? '$' + s : ''; };
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const monLabel = (ym) => { const [y, m] = ym.split('-'); return (MON[+m - 1] || ym) + ' ' + y; };
+const SERIES = { DL: 'DL · Dataleaks', CM: 'CM · Comic pages' };
+const STOP = new Set(('that this with from they their them have been were which what when where will would could should about into over under than then also only just more most some such very each other these those there here your while after before because between through against without within whose being does doing done make made like even still many much both every never always once ever back down onto upon across along around beyond inside outside whenever wherever until unless though although another anyone everyone someone something nothing everything anything itself himself herself themselves called known threat level status subject profile residual self image visual markers unauthorized message former role name backstory appears manifests turning single entire during shows form half high last').split(' '));
+const catCard = (r, i) => {
+  const c = r.c, nm = c.subject && !/^[?\s]+$/.test(c.subject) ? c.subject : c.name.replace(/^[^:]*:/, '');
+  return `<a class="card unfiled" href="#/clearance"><span class="in"><span class="img">${thumb({ image: c.image, htmlSrc: c.htmlSrc }, c.unit, nm)}<span class="no">${String(c.dl != null ? c.dl : i + 1).padStart(3, '0')}</span><span class="pill badge">UNFILED</span></span>
+  <span class="bd"><h3>${esc(nm)}</h3><span class="sub">${esc(c.rsi || c.title || c.known || '')}</span><span class="row"><span>${esc((c.threat || c.series || 'Unclassified').slice(0, 26))}</span><span>Get cleared ▸</span></span></span></span></a>`;
+};
+/* One row per asset: its on-chain dossier (catalog) merged with whatever its holder has filed. Facets and themes are derived from these rows, so new mints and new filings show up with no code changes. */
+function buildRows() {
+  const filed = new Map(S.entries.map((e) => [e.unit, e])), seen = new Set(), rows = [];
+  const add = (c, f) => {
+    const en = (f && f.entry) || {}, handle = tagOf(en.handle);
+    const body = [c ? [c.name, c.title, c.subject, c.rsi, c.known, c.status, c.threat, c.markers, c.message, c.series] : [], f ? [f.callsign, ...Object.values(en)] : [], handle].flat(2).filter((x) => typeof x === 'string' && x).join(' \n ').toLowerCase();
+    rows.push({ unit: c ? c.unit : f.unit, c, f, handle, body, words: new Set(body.match(/[a-z]{4,}/g) || []), dl: c && c.dl != null ? c.dl : null,
+      name: (f && f.callsign) || (c && (c.subject || c.name)) || '', htmlSrc: (c && c.htmlSrc) || (f && f.meta && f.meta.htmlSrc) || '', supply: c ? c.supply : 0, minted: c && c.minted ? c.minted.slice(0, 7) : '', series: c ? c.series : '', threat: f ? en.threat || 'Unclassified' : '' });
+  };
+  S.catalog.forEach((c) => { seen.add(c.unit); add(c, filed.get(c.unit)); });
+  S.entries.forEach((f) => { if (!seen.has(f.unit)) add(null, f); });
+  return rows;
+}
+const FACETS = [
+  { id: 'filing', all: 'Filed & unfiled', val: (r) => (r.f ? 'Filed by a holder' : 'Not yet filed') },
+  { id: 'series', all: 'Any series', val: (r) => r.series, label: (v) => SERIES[v] || v },
+  { id: 'format', all: 'Any format', val: (r) => (r.htmlSrc ? 'Interactive (HTML)' : 'Still image') },
+  { id: 'edition', all: 'Any edition size', val: (r) => (r.c ? (r.supply > 1 ? 'Multi-edition' : 'One of one') : '') },
+  { id: 'minted', all: 'Any mint date', val: (r) => r.minted, label: monLabel, order: (a, b) => a.localeCompare(b) },
+  { id: 'holder', all: 'Any holder', val: (r) => r.handle, order: (a, b) => a.localeCompare(b) },
+  { id: 'threat', all: 'Any filed threat level', val: (r) => r.threat, order: (a, b) => THREATS.indexOf(a) - THREATS.indexOf(b) },
+];
 export function roster() {
-  app().innerHTML = `<div class="view"><div class="eyebrow">Roster</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Cleared interns</h1><p class="muted" style="max-width:60ch">Each file is written by a holder and verified on-chain. Together they fill the gaps.</p>
-  <div class="tools"><input id="q" placeholder="Search callsign, subject, message…" aria-label="Search roster"><select id="th" aria-label="Threat level"><option value="">All threat levels</option>${THREATS.map((t) => `<option>${t}</option>`).join('')}</select><select id="so" aria-label="Sort"><option value="new">Newest</option><option value="old">Longest surviving</option><option value="az">A–Z</option></select><span class="muted" id="ct"></span></div>
+  const st = { q: '', f: {}, themes: new Set(), so: 'filed' }; let rows = [], themes = [];
+  app().innerHTML = `<div class="view"><div class="eyebrow">Roster</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Cleared interns</h1><p class="muted" style="max-width:60ch">Every Dataleak in the collection, filed or not. Search the dossiers, filter by what is on-chain, or pick a theme. Each file is written by a holder and verified on-chain.</p>
+  <div class="tools"><input id="q" placeholder="Search name, look, backstory, $handle…" aria-label="Search roster" autocomplete="off"><span id="fs" style="display:contents"></span><select id="so" aria-label="Sort"><option value="filed">Filed first</option><option value="dl">Collection order</option><option value="minted">Newest minted</option><option value="old">Longest surviving</option><option value="az">A–Z</option></select><button class="btn ghost" id="clr" type="button" hidden>Clear filters</button><span class="muted" id="ct"></span></div>
+  <div class="chips" id="chips" role="group" aria-label="Themes"></div>
   <div class="grid g4 roster" id="rg"></div></div>`;
+  const compute = () => {
+    rows = buildRows(); const df = new Map();
+    rows.forEach((r) => r.words.forEach((w) => { if (!STOP.has(w)) df.set(w, (df.get(w) || 0) + 1); }));
+    themes = [...df].filter(([, n]) => n >= 4 && n < rows.length * 0.8).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, 16);
+    st.themes = new Set([...st.themes].filter((w) => themes.some((t) => t[0] === w)));
+  };
+  const controls = () => {
+    $('#fs').innerHTML = FACETS.map((F) => {
+      const cnt = new Map(); rows.forEach((r) => { const v = F.val(r); if (v) cnt.set(v, (cnt.get(v) || 0) + 1); });
+      if (cnt.size < 2) { delete st.f[F.id]; return ''; }
+      const opts = [...cnt]; if (F.order) opts.sort((a, b) => F.order(a[0], b[0]));
+      return `<select id="f-${F.id}" data-f="${F.id}" aria-label="${esc(F.all)}"><option value="">${esc(F.all)}</option>${opts.map(([v, n]) => `<option value="${esc(v)}"${st.f[F.id] === v ? ' selected' : ''}>${esc(F.label ? F.label(v) : v)} (${n})</option>`).join('')}</select>`;
+    }).join('');
+    $$('#fs select').forEach((s) => (s.onchange = () => { st.f[s.dataset.f] = s.value; draw(); }));
+    $('#chips').innerHTML = themes.map(([w, n]) => `<button type="button" class="chip" data-w="${esc(w)}" aria-pressed="${st.themes.has(w)}">${esc(w)} <i>${n}</i></button>`).join('');
+    $$('#chips .chip').forEach((b) => (b.onclick = () => { const w = b.dataset.w; st.themes.has(w) ? st.themes.delete(w) : st.themes.add(w); b.setAttribute('aria-pressed', st.themes.has(w)); draw(); }));
+  };
+  const any = () => !!(st.q.trim() || st.themes.size || Object.values(st.f).some(Boolean));
+  const clearAll = () => { st.q = ''; st.f = {}; st.themes = new Set(); $('#q').value = ''; controls(); draw(); };
   const draw = () => {
-    const q = $('#q').value.toLowerCase(), th = $('#th').value, so = $('#so').value;
-    let l = S.entries.filter((e) => (!th || e.entry.threat === th) && (!q || JSON.stringify([e.callsign, e.entry]).toLowerCase().includes(q)));
-    l = [...l].sort((a, b) => so === 'az' ? a.callsign.localeCompare(b.callsign) : so === 'old' ? (a.publishedAt || '').localeCompare(b.publishedAt || '') : (b.publishedAt || '').localeCompare(a.publishedAt || ''));
-    $('#ct').textContent = l.length + ' on file' + (CONFIG.SLOTS ? ' · ' + Math.max(0, CONFIG.SLOTS - S.entries.length) + ' open of ' + CONFIG.SLOTS : '');
-    $('#rg').innerHTML = l.map(cardHTML).join('') + (q || th ? '' : slots(S.entries.length));
+    const toks = st.q.toLowerCase().split(/\s+/).filter(Boolean);
+    const byDl = (a, b) => (a.dl != null ? a.dl : 1e9) - (b.dl != null ? b.dl : 1e9) || a.name.localeCompare(b.name), pub = (r) => (r.f && r.f.publishedAt) || '';
+    const cmp = st.so === 'dl' ? byDl : st.so === 'minted' ? (a, b) => b.minted.localeCompare(a.minted) || byDl(a, b) : st.so === 'old' ? (a, b) => (!a.f - !b.f) || pub(a).localeCompare(pub(b)) || byDl(a, b) : st.so === 'az' ? (a, b) => a.name.localeCompare(b.name) : (a, b) => (!a.f - !b.f) || pub(b).localeCompare(pub(a)) || byDl(a, b);
+    const l = rows.filter((r) => toks.every((t) => r.body.includes(t)) && [...st.themes].every((w) => r.words.has(w)) && FACETS.every((F) => !st.f[F.id] || F.val(r) === st.f[F.id])).sort(cmp);
+    $('#ct').textContent = l.length + ' of ' + rows.length + ' shown · ' + l.filter((r) => r.f).length + ' filed';
+    $('#clr').hidden = !any(); $('#chips').hidden = !themes.length;
+    $('#rg').innerHTML = l.length ? l.map((r, i) => (r.f ? cardHTML(r.f, i, r.dl) : catCard(r, i))).join('') + (!S.catalog.length && !any() ? slots(S.entries.length) : '') : '<p class="muted">Nothing in the archive matches. <button class="btn ghost" id="clr2" type="button">Clear filters</button></p>';
+    const c2 = $('#clr2'); if (c2) c2.onclick = clearAll;
     armImages($('#rg'));
   };
-  ['q', 'th', 'so'].forEach((i) => ($('#' + i).oninput = draw)); draw();
-  const tick = setInterval(async () => { if (!$('#rg')) return clearInterval(tick); try { const r = await loadEntries(); S.entries = r.entries; } catch {} if ($('#rg') && document.activeElement.id !== 'q') draw(); }, 30000);
+  compute(); controls(); $('#q').oninput = (e) => { st.q = e.target.value; draw(); }; $('#so').onchange = (e) => { st.so = e.target.value; draw(); }; $('#clr').onclick = clearAll; draw();
+  const tick = setInterval(async () => { if (!$('#rg')) return clearInterval(tick); try { const [r, c] = await Promise.all([loadEntries(), loadCatalog()]); S.entries = r.entries; if (c.length) S.catalog = c; } catch {} if ($('#rg') && document.activeElement.id !== 'q') { compute(); controls(); draw(); } }, 30000);
 }
 
 /* ───────────── AGENT ───────────── */

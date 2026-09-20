@@ -32,3 +32,6 @@ async function post(path, body) {
 export async function loadSlots() { try { const r = await getJson(CONFIG.API_BASE.replace(/\/$/, '') + '/v1/collection'); if (r && r.count > 0) CONFIG.SLOTS = r.count; } catch {} return CONFIG.SLOTS; }
 export const submitEntry = (packet) => post('/v1/entries', packet);
 export const retractEntry = (packet) => post('/v1/retract', packet);
+
+/* Every collectible under our policies (on-chain dossier parsed into fields): powers roster search + filters, includes new mints automatically. */
+export async function loadCatalog() { try { const r = await getJson(CONFIG.API_BASE.replace(/\/$/, '') + '/v1/catalog'); return Array.isArray(r.items) ? r.items : []; } catch { return []; } }

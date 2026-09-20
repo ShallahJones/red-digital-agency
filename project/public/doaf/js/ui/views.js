@@ -7,7 +7,9 @@ import { downloadBadge } from './badge.js';
 import { mountRadio } from './radio.js';
 
 export const S = { entries: [], catalog: [], source: 'seed', lore: [], meta: {}, ready: null, cleanup: null };
-export function init() { S.ready = Promise.all([loadEntries(), loadLore(), loadSlots(), loadCatalog()]).then(([e, l, , c]) => { S.entries = e.entries; S.source = e.source; S.lore = l; S.catalog = c; if (c.length) CONFIG.SLOTS = c.length; }); return S.ready; }
+/* Filed entries default their callsign to the raw asset name (e.g. "Madjacket:DL_044"): show the dossier's real name instead. Callsigns a holder actually typed are left alone. */
+export function fixNames() { const by = new Map(S.catalog.map((c) => [c.unit, c])); S.entries.forEach((e) => { if (!/^madjacket:/i.test(e.callsign || '')) return; const c = by.get(e.unit); e.callsign = (c && c.display) || (e.entry && e.entry.subject && e.entry.subject.split(/\s+[–—-]\s+|;/)[0].trim()) || e.callsign.replace(/^[^:]*:/, '').replace(/^[A-Za-z]+\d*_/, '').replace(/_/g, ' '); }); }
+export function init() { S.ready = Promise.all([loadEntries(), loadLore(), loadSlots(), loadCatalog()]).then(([e, l, , c]) => { S.entries = e.entries; S.source = e.source; S.lore = l; S.catalog = c; if (c.length) CONFIG.SLOTS = c.length; fixNames(); }); return S.ready; }
 const app = () => $('#app');
 
 function countUp(el) { const to = +el.dataset.to; if (matchMedia('(prefers-reduced-motion: reduce)').matches || !to) { el.textContent = to; return; } const t0 = performance.now(); (function f(t) { const k = Math.min(1, (t - t0) / 900); el.textContent = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(f); })(t0); }
@@ -153,7 +155,7 @@ const tagOf = (h) => { const s = String(h || '').replace(/^[@$\s]+/, '').trim();
 /* The broad themes that run through the whole collection. Items are tagged by the Worker (/v1/catalog); chips only show themes that at least one asset has. */
 const THEME_LABELS = { signal: 'Signal & control', resistance: 'Resistance', cyber: 'Cyber & data', spectral: 'Spectral & mystic', stage: 'Sound & stage', warrior: 'Warriors & sentinels' };
 const catCard = (r, i) => {
-  const c = r.c, nm = c.subject && !/^[?\s]+$/.test(c.subject) ? c.subject : c.name.replace(/^[^:]*:/, '');
+  const c = r.c, nm = c.display || c.name.replace(/^[^:]*:/, '').replace(/^[A-Za-z]+\d*_/, '').replace(/_/g, ' ');
   return `<a class="card unfiled" href="#/clearance"><span class="in"><span class="img">${thumb({ image: c.image, htmlSrc: c.htmlSrc }, c.unit, nm)}<span class="no">${String(c.dl != null ? c.dl : i + 1).padStart(3, '0')}</span><span class="pill badge">UNFILED</span></span>
   <span class="bd"><h3>${esc(nm)}</h3><span class="sub">${esc(c.rsi || c.title || c.known || '')}</span><span class="row"><span>${esc((c.threat || c.series || 'Unclassified').slice(0, 26))}</span><span>Get cleared ▸</span></span></span></span></a>`;
 };
@@ -197,7 +199,7 @@ export function roster() {
     armImages($('#rg'));
   };
   rows = buildRows(); chips(); $('#q').oninput = (e) => { st.q = e.target.value; draw(); }; $('#so').onchange = (e) => { st.so = e.target.value; draw(); }; $('#sh').onchange = (e) => { st.show = e.target.value; draw(); }; $('#clr').onclick = clearAll; draw();
-  const tick = setInterval(async () => { if (!$('#rg') || run !== rosterRun) return clearInterval(tick); try { const [r, c] = await Promise.all([loadEntries(), loadCatalog()]); S.entries = r.entries; if (c.length) S.catalog = c; } catch {} if ($('#rg') && run === rosterRun && document.activeElement.id !== 'q') { rows = buildRows(); chips(); draw(); } }, 30000);
+  const tick = setInterval(async () => { if (!$('#rg') || run !== rosterRun) return clearInterval(tick); try { const [r, c] = await Promise.all([loadEntries(), loadCatalog()]); S.entries = r.entries; if (c.length) S.catalog = c; fixNames(); } catch {} if ($('#rg') && run === rosterRun && document.activeElement.id !== 'q') { rows = buildRows(); chips(); draw(); } }, 30000);
   S.cleanup = () => clearInterval(tick);
 }
 

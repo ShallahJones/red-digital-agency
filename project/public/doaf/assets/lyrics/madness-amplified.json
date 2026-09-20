@@ -35,12 +35,6 @@
    "b": 122.0,
    "from": 26,
    "to": 35
-  },
-  {
-   "a": 128.0,
-   "b": 146.5,
-   "from": 35,
-   "to": 44
   }
  ],
  "lines": [
@@ -216,51 +210,6 @@
   },
   {
    "t": 120.2,
-   "text": "I'm alive",
-   "w": 3.6
-  },
-  {
-   "t": 128.0,
-   "text": "Madness amplified",
-   "w": 4.6
-  },
-  {
-   "t": 130.3,
-   "text": "I'm alive",
-   "w": 3.6
-  },
-  {
-   "t": 132.0,
-   "text": "I'm alive",
-   "w": 3.6
-  },
-  {
-   "t": 133.6,
-   "text": "Cracks in the system where I thrive",
-   "w": 8.6
-  },
-  {
-   "t": 137.7,
-   "text": "Madness amplified",
-   "w": 4.6
-  },
-  {
-   "t": 139.8,
-   "text": "It's the key",
-   "w": 3.6
-  },
-  {
-   "t": 141.5,
-   "text": "It's the knife",
-   "w": 3.6
-  },
-  {
-   "t": 143.2,
-   "text": "I'm alive",
-   "w": 3.6
-  },
-  {
-   "t": 144.9,
    "text": "I'm alive",
    "w": 3.6
   }

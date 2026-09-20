@@ -6,14 +6,33 @@
    "artist": "Boxlord",
    "src": "assets/mad-alchemy.mp3",
    "lyrics": "assets/lyrics/mad-alchemy.json",
-   "lyricsOffset": 1.0
+   "solos": [
+    [
+     0.2,
+     19.4
+    ],
+    [
+     90.3,
+     112.4
+    ],
+    [
+     132.6,
+     154.0
+    ]
+   ]
   },
   {
    "id": "madness-amplified",
    "title": "Madness Amplified",
    "artist": "Boxlord",
    "src": "assets/madness-amplified.mp3",
-   "lyrics": "assets/lyrics/madness-amplified.json"
+   "lyrics": "assets/lyrics/madness-amplified.json",
+   "solos": [
+    [
+     123.5,
+     150.1
+    ]
+   ]
   }
  ]
 }

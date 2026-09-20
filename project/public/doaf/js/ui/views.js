@@ -170,9 +170,9 @@ function buildRows() {
   return rows;
 }
 export function roster() {
-  const st = { q: '', themes: new Set(), show: 'all', so: 'dl' }; let rows = [];
+  const DEF = 'filed', st = { q: '', themes: new Set(), show: DEF, so: 'dl' }; let rows = [];
   app().innerHTML = `<div class="view"><div class="eyebrow">Roster</div><h1 style="font-size:clamp(28px,4vw,44px);margin:12px 0 10px">Cleared interns</h1><p class="muted" style="max-width:60ch">Every Dataleak in the collection, filed or not. Search the dossiers or browse by theme. Each file is written by a holder and verified on-chain.</p>
-  <div class="tools"><input id="q" placeholder="Search name, look, backstory, $handle…" aria-label="Search roster" autocomplete="off"><select id="sh" aria-label="Show"><option value="all">All files</option><option value="filed">Filed by a holder</option><option value="unfiled">Not yet filed</option></select><select id="so" aria-label="Sort"><option value="dl">Collection order</option><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select><button class="btn ghost" id="clr" type="button" hidden>Clear</button><span class="muted" id="ct"></span></div>
+  <div class="tools"><input id="q" placeholder="Search name, look, backstory, $handle…" aria-label="Search roster" autocomplete="off"><select id="so" aria-label="Sort"><option value="dl">Collection order</option><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select><button class="btn ghost" id="clr" type="button" hidden>Clear</button><span class="muted" id="ct"></span><select id="sh" class="far" aria-label="Show"><option value="filed" selected>Filed files</option><option value="unfiled">Not yet filed</option><option value="all">Everything</option></select></div>
   <div class="chips" id="chips" role="group" aria-label="Themes"></div>
   <div class="grid g4 roster" id="rg"></div></div>`;
   const chips = () => {
@@ -182,8 +182,8 @@ export function roster() {
     $('#chips').innerHTML = keys.map((k) => `<button type="button" class="chip" data-w="${esc(k)}" aria-pressed="${st.themes.has(k)}">${esc(THEME_LABELS[k] || k)} <i>${n[k]}</i></button>`).join('');
     $$('#chips .chip').forEach((b) => (b.onclick = () => { const w = b.dataset.w; st.themes.has(w) ? st.themes.delete(w) : st.themes.add(w); b.setAttribute('aria-pressed', st.themes.has(w)); draw(); }));
   };
-  const any = () => !!(st.q.trim() || st.themes.size || st.show !== 'all');
-  const clearAll = () => { st.q = ''; st.themes = new Set(); st.show = 'all'; $('#q').value = ''; $('#sh').value = 'all'; chips(); draw(); };
+  const any = () => !!(st.q.trim() || st.themes.size || st.show !== DEF);
+  const clearAll = () => { st.q = ''; st.themes = new Set(); st.show = DEF; $('#q').value = ''; $('#sh').value = DEF; chips(); draw(); };
   const draw = () => {
     const toks = st.q.toLowerCase().split(/\s+/).filter(Boolean), pub = (r) => (r.f && r.f.publishedAt) || '';
     const byDl = (a, b) => (a.dl != null ? a.dl : 1e9) - (b.dl != null ? b.dl : 1e9) || a.name.localeCompare(b.name);

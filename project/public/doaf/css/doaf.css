@@ -309,3 +309,5 @@ pre.raw{margin:0;max-height:340px;overflow:auto;background:var(--panel);border:1
 .chip:focus-visible{outline:1px solid var(--acc);outline-offset:2px}
 .card.unfiled .img{filter:saturate(.72)}
 .card.unfiled .pill.badge{color:var(--mute)}
+
+.tools .far{margin-left:auto}

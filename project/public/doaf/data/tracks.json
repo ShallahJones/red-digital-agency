@@ -5,7 +5,8 @@
    "title": "Mad Alchemy",
    "artist": "Boxlord",
    "src": "assets/mad-alchemy.mp3",
-   "lyrics": "assets/lyrics/mad-alchemy.json"
+   "lyrics": "assets/lyrics/mad-alchemy.json",
+   "lyricsOffset": 1.0
   },
   {
    "id": "madness-amplified",

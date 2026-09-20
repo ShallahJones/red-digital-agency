@@ -51,7 +51,7 @@ export const onChange = (f) => (R.subs.add(f), () => R.subs.delete(f));
 
 /* Lyrics: a very faint teleprompter at the top of every page, synced to the playing track.
    A track opts in with "lyrics": "assets/lyrics/<id>.json" → {"lines":[{"t":seconds,"text":"…"}]}. Edit t to retime a line. */
-const LY = { id: '', lines: [], el: null, inner: null, idx: -2, on: false, raf: 0, cache: {} };
+const LY = { id: '', lines: [], fresh: true, el: null, inner: null, idx: -2, on: false, raf: 0, cache: {} };
 const LAG = 0.15; /* never run ahead of the vocal: lines show a hair late, plus each track's own "lyricsOffset" (seconds, + = later) */
 function lyEl() {
   if (!LY.el) { const d = document.createElement('div'); d.id = 'lyr'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = '<div class="lyr-in"></div>'; document.body.appendChild(d); LY.el = d; LY.inner = d.firstChild; }
@@ -59,27 +59,33 @@ function lyEl() {
 }
 async function lyLoad(t) {
   if (!t.lyrics) return [];
-  if (!(t.id in LY.cache)) { try { const r = await fetch(t.lyrics); LY.cache[t.id] = r.ok ? ((await r.json()).lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t) : []; } catch { LY.cache[t.id] = []; } }
+  if (!(t.id in LY.cache)) { try { const ov = ls.get('doaf-lyrics:' + t.id); if (ov) { const j = JSON.parse(ov); LY.cache[t.id] = (j.lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t); return LY.cache[t.id]; } } catch {}
+    try { const r = await fetch(t.lyrics); LY.cache[t.id] = r.ok ? ((await r.json()).lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t) : []; } catch { LY.cache[t.id] = []; } }
   return LY.cache[t.id];
 }
+/* the sync tool saved (or cleared) a per-device override: reload this track's lyrics */
+export function lyricsReset(id) { delete LY.cache[id]; LY.id = ''; }
 function lyHide() { if (LY.el) LY.el.classList.remove('on'); }
 function lyTick() {
   LY.raf = 0; const t = cur();
   if (!R.playing || t.gen || !R.audio || !t.lyrics) { lyHide(); return; }
   const el = lyEl();
   if (LY.id !== t.id) {
-    LY.id = t.id; LY.lines = []; LY.idx = -2; LY.inner.innerHTML = '';
+    /* new track: wipe everything from the last one at once (no animated catch-up) */
+    LY.id = t.id; LY.lines = []; LY.idx = -2; LY.fresh = true; el.classList.remove('on'); LY.inner.style.transition = 'none'; LY.inner.style.transform = 'translateY(0)'; LY.inner.innerHTML = '';
     lyLoad(t).then((lines) => {
       if (LY.id !== t.id) return; LY.lines = lines;
       LY.inner.innerHTML = lines.map((l) => `<p>${esc(l.text)}</p>`).join(''); LY.idx = -2;
     });
   }
-  if (LY.lines.length) {
+  /* only follow the clock once the audio element really holds THIS track (its old position lingers for a moment after a track change) */
+  const a = R.audio, live = a.dataset.id === t.id && a.readyState >= 1 && !a.seeking && a.currentTime < (a.duration || 1e9) - 0.05;
+  if (LY.lines.length && live) {
     const now = R.audio.currentTime - LAG - (t.lyricsOffset || 0); let i = -1; for (let k = 0; k < LY.lines.length && LY.lines[k].t <= now; k++) i = k;
     const shown = i >= 0; /* hold the current line through instrumental breaks until the next line starts */
     if (i !== LY.idx) {
       LY.idx = i; const ps = LY.inner.children, c = ps[Math.max(i, 0)];
-      if (c) LY.inner.style.transform = `translateY(${el.clientHeight / 2 - (c.offsetTop + c.offsetHeight / 2)}px)`;
+      if (c) { if (LY.fresh) LY.inner.style.transition = 'none'; LY.inner.style.transform = `translateY(${el.clientHeight / 2 - (c.offsetTop + c.offsetHeight / 2)}px)`; if (LY.fresh) { void LY.inner.offsetHeight; LY.inner.style.transition = ''; LY.fresh = false; } }
       for (let k = 0; k < ps.length; k++) ps[k].className = k === i ? 'cur' : Math.abs(k - i) === 1 ? 'near' : '';
     }
     el.classList.toggle('on', shown);

@@ -152,8 +152,8 @@ export function file(param) {
 
 /* ───────────── ROSTER ───────────── */
 const tagOf = (h) => { const s = String(h || '').replace(/^[@$\s]+/, '').trim(); return s ? '$' + s : ''; };
-/* The broad themes that run through the whole collection. Items are tagged by the Worker (/v1/catalog); chips only show themes that at least one asset has. */
-const THEME_LABELS = { signal: 'Signal & control', resistance: 'Resistance', cyber: 'Cyber & data', spectral: 'Spectral & mystic', stage: 'Sound & stage', warrior: 'Warriors & sentinels' };
+/* Narrow themes; not every asset has one. Items are tagged by the Worker (/v1/catalog); chips only show themes that at least one asset has. */
+const THEME_LABELS = { street: 'Rooftops & alleys', cosmic: 'Cosmic & void', ghost: 'Ghosts & the dead', hacker: 'Hackers & leaks', mirror: 'Mirrors & doubles', beast: 'Creatures', hunter: 'Hunters & killers' };
 const catCard = (r, i) => {
   const c = r.c, nm = c.display || c.name.replace(/^[^:]*:/, '').replace(/^[A-Za-z]+\d*_/, '').replace(/_/g, ' ');
   return `<a class="card unfiled" href="#/clearance"><span class="in"><span class="img">${thumb({ image: c.image, htmlSrc: c.htmlSrc }, c.unit, nm)}<span class="no">${String(c.dl != null ? c.dl : i + 1).padStart(3, '0')}</span><span class="pill badge">UNFILED</span></span>

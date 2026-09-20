@@ -1,180 +1,268 @@
 {
+ "blocks": [
+  {
+   "a": 10.0,
+   "b": 32.5,
+   "from": 0,
+   "to": 5
+  },
+  {
+   "a": 32.5,
+   "b": 38.3,
+   "from": 5,
+   "to": 8
+  },
+  {
+   "a": 38.5,
+   "b": 59.0,
+   "from": 8,
+   "to": 17
+  },
+  {
+   "a": 64.5,
+   "b": 85.0,
+   "from": 17,
+   "to": 23
+  },
+  {
+   "a": 92.0,
+   "b": 100.5,
+   "from": 23,
+   "to": 26
+  },
+  {
+   "a": 101.5,
+   "b": 122.0,
+   "from": 26,
+   "to": 35
+  },
+  {
+   "a": 128.0,
+   "b": 146.5,
+   "from": 35,
+   "to": 44
+  }
+ ],
  "lines": [
   {
    "t": 10.0,
-   "text": "I hear the hum of broken minds"
+   "text": "I hear the hum of broken minds",
+   "w": 8.6
   },
   {
    "t": 15.3,
-   "text": "A choir that cracks and bends with time"
+   "text": "A choir that cracks and bends with time",
+   "w": 8.6
   },
   {
    "t": 20.6,
-   "text": "The world spins fast but I'm offbeat"
+   "text": "The world spins fast but I'm offbeat",
+   "w": 8.6
   },
   {
    "t": 25.8,
-   "text": "Marching to a fractured drum"
+   "text": "Marching to a fractured drum",
+   "w": 7.6
   },
   {
    "t": 30.4,
-   "text": "Incomplete"
+   "text": "Incomplete",
+   "w": 3.6
   },
   {
    "t": 32.5,
-   "text": "They call it chaos"
+   "text": "They call it chaos",
+   "w": 4.6
   },
   {
    "t": 34.2,
-   "text": "I call it clear"
+   "text": "I call it clear",
+   "w": 4.6
   },
   {
    "t": 35.8,
-   "text": "What they fear is what I steer"
+   "text": "What they fear is what I steer",
+   "w": 7.6
   },
   {
    "t": 38.5,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 41.0,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 42.9,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 44.7,
-   "text": "Cracks in the system where I thrive"
+   "text": "Cracks in the system where I thrive",
+   "w": 8.6
   },
   {
    "t": 49.2,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 51.6,
-   "text": "It's the key"
+   "text": "It's the key",
+   "w": 3.6
   },
   {
    "t": 53.5,
-   "text": "It's the knife"
+   "text": "It's the knife",
+   "w": 3.6
   },
   {
    "t": 55.4,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 57.2,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 64.5,
-   "text": "My thoughts are maps with torn-up edges"
+   "text": "My thoughts are maps with torn-up edges",
+   "w": 9.6
   },
   {
    "t": 69.2,
-   "text": "I dance on the lines between the ledges"
+   "text": "I dance on the lines between the ledges",
+   "w": 11.6
   },
   {
    "t": 74.8,
-   "text": "Falling feels like flying when you let go"
+   "text": "Falling feels like flying when you let go",
+   "w": 9.6
   },
   {
    "t": 79.4,
-   "text": "What's sane is too slow"
+   "text": "What's sane is too slow",
+   "w": 5.6
   },
   {
    "t": 82.1,
-   "text": "Too hollow"
+   "text": "Too hollow",
+   "w": 3.6
   },
   {
    "t": 83.8,
-   "text": "Too low"
+   "text": "Too low",
+   "w": 2.6
   },
   {
    "t": 92.0,
-   "text": "They call it broken"
+   "text": "They call it broken",
+   "w": 5.6
   },
   {
    "t": 94.8,
-   "text": "I call it free"
+   "text": "I call it free",
+   "w": 4.6
   },
   {
    "t": 97.0,
-   "text": "It's the fire that burns through me"
+   "text": "It's the fire that burns through me",
+   "w": 7.6
   },
   {
    "t": 101.5,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 104.0,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 105.9,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 107.7,
-   "text": "Cracks in the system where I thrive"
+   "text": "Cracks in the system where I thrive",
+   "w": 8.6
   },
   {
    "t": 112.2,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 114.6,
-   "text": "It's the key"
+   "text": "It's the key",
+   "w": 3.6
   },
   {
    "t": 116.5,
-   "text": "It's the knife"
+   "text": "It's the knife",
+   "w": 3.6
   },
   {
    "t": 118.4,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 120.2,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 128.0,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 130.3,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 132.0,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 133.6,
-   "text": "Cracks in the system where I thrive"
+   "text": "Cracks in the system where I thrive",
+   "w": 8.6
   },
   {
    "t": 137.7,
-   "text": "Madness amplified"
+   "text": "Madness amplified",
+   "w": 4.6
   },
   {
    "t": 139.8,
-   "text": "It's the key"
+   "text": "It's the key",
+   "w": 3.6
   },
   {
    "t": 141.5,
-   "text": "It's the knife"
+   "text": "It's the knife",
+   "w": 3.6
   },
   {
    "t": 143.2,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   },
   {
    "t": 144.9,
-   "text": "I'm alive"
+   "text": "I'm alive",
+   "w": 3.6
   }
  ]
 }

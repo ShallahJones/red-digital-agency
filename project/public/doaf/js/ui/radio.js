@@ -57,10 +57,33 @@ function lyEl() {
   if (!LY.el) { const d = document.createElement('div'); d.id = 'lyr'; d.setAttribute('aria-hidden', 'true'); d.innerHTML = '<div class="lyr-in"></div>'; document.body.appendChild(d); LY.el = d; LY.inner = d.firstChild; }
   return LY.el;
 }
+/* Solos: time ranges [start,end] with no vocal. Lines inside a lyric block are re-spread over the block's vocal time only (block minus solos), so the reader never runs ahead through a solo.
+   Ranges come from tracks.json ("solos") or this device's override saved by #/sync. */
+export function retime(lines, blocks, solos) {
+  if (!solos.length || !blocks || !blocks.length) return lines;
+  const out = lines.map((l) => ({ ...l })), drop = new Set();
+  for (const b of blocks) {
+    let iv = [[b.a, b.b]];
+    for (const [s, e] of solos) iv = iv.flatMap(([x, y]) => (e <= x || s >= y ? [[x, y]] : [[x, Math.max(x, s)], [Math.min(y, e), y]].filter(([p, q]) => q - p > 0.05)));
+    if (iv.length === 1 && iv[0][0] === b.a && iv[0][1] === b.b) continue;
+    const idx = []; for (let i = b.from; i < b.to; i++) idx.push(i);
+    const total = iv.reduce((n, [x, y]) => n + y - x, 0);
+    if (total < 1.5) { idx.forEach((i) => drop.add(i)); continue; }
+    const ws = idx.map((i) => lines[i].w || 1), sum = ws.reduce((x, y) => x + y, 0); let cum = 0;
+    idx.forEach((i, k) => { let pos = (total * cum) / sum, t = iv[0][0]; cum += ws[k]; for (const [x, y] of iv) { if (pos < y - x) { t = x + pos; break; } pos -= y - x; t = y; } out[i].t = +t.toFixed(2); });
+  }
+  return out.filter((_, i) => !drop.has(i)).sort((a, b) => a.t - b.t);
+}
+const okLines = (a) => (a || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t);
 async function lyLoad(t) {
   if (!t.lyrics) return [];
-  if (!(t.id in LY.cache)) { try { const ov = ls.get('doaf-lyrics:' + t.id); if (ov) { const j = JSON.parse(ov); LY.cache[t.id] = (j.lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t); return LY.cache[t.id]; } } catch {}
-    try { const r = await fetch(t.lyrics); LY.cache[t.id] = r.ok ? ((await r.json()).lines || []).filter((l) => l && l.text && isFinite(l.t)).sort((a, b) => a.t - b.t) : []; } catch { LY.cache[t.id] = []; } }
+  if (!(t.id in LY.cache)) {
+    let lines = [], blocks = [];
+    try { const ov = ls.get('doaf-lyrics:' + t.id); if (ov) lines = okLines(JSON.parse(ov).lines); } catch {}
+    if (!lines.length) { try { const r = await fetch(t.lyrics); if (r.ok) { const j = await r.json(); lines = j.lines || []; blocks = j.blocks || []; } } catch {} }
+    let solos = t.solos || []; try { const so = ls.get('doaf-solos:' + t.id); if (so) solos = JSON.parse(so); } catch {}
+    LY.cache[t.id] = okLines(retime(lines, blocks, solos.filter((r) => Array.isArray(r) && r[1] > r[0])));
+  }
   return LY.cache[t.id];
 }
 /* the sync tool saved (or cleared) a per-device override: reload this track's lyrics */

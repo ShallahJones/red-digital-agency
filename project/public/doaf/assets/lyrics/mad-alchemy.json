@@ -1,176 +1,257 @@
 {
+ "blocks": [
+  {
+   "a": 21.0,
+   "b": 51.5,
+   "from": 0,
+   "to": 13
+  },
+  {
+   "a": 59.5,
+   "b": 66.0,
+   "from": 13,
+   "to": 15
+  },
+  {
+   "a": 72.0,
+   "b": 89.0,
+   "from": 15,
+   "to": 23
+  },
+  {
+   "a": 92.5,
+   "b": 112.0,
+   "from": 23,
+   "to": 29
+  },
+  {
+   "a": 114.0,
+   "b": 130.0,
+   "from": 29,
+   "to": 35
+  },
+  {
+   "a": 135.5,
+   "b": 153.0,
+   "from": 35,
+   "to": 43
+  }
+ ],
  "lines": [
   {
    "t": 21.0,
-   "text": "Cracked mirror in the corner of my brain"
+   "text": "Cracked mirror in the corner of my brain",
+   "w": 10.6
   },
   {
    "t": 25.3,
-   "text": "Each shard whispers"
+   "text": "Each shard whispers",
+   "w": 4.6
   },
   {
    "t": 27.1,
-   "text": "\"You're not insane\""
+   "text": "\"You're not insane\"",
+   "w": 4.6
   },
   {
    "t": 29.0,
-   "text": "I feed the chaos"
+   "text": "I feed the chaos",
+   "w": 4.6
   },
   {
    "t": 30.8,
-   "text": "I light the spark"
+   "text": "I light the spark",
+   "w": 4.6
   },
   {
    "t": 32.6,
-   "text": "Turn my shadow into art"
+   "text": "Turn my shadow into art",
+   "w": 7.6
   },
   {
    "t": 35.6,
-   "text": "Splitting atoms in the palms of my hands"
+   "text": "Splitting atoms in the palms of my hands",
+   "w": 10.6
   },
   {
    "t": 39.8,
-   "text": "Twist the strings of the mind"
+   "text": "Twist the strings of the mind",
+   "w": 6.6
   },
   {
    "t": 42.5,
-   "text": "Make it dance"
+   "text": "Make it dance",
+   "w": 3.6
   },
   {
    "t": 43.9,
-   "text": "A laugh that echoes"
+   "text": "A laugh that echoes",
+   "w": 5.6
   },
   {
    "t": 46.1,
-   "text": "Sharp and wild"
+   "text": "Sharp and wild",
+   "w": 3.6
   },
   {
    "t": 47.5,
-   "text": "Freud and Jung in exile"
+   "text": "Freud and Jung in exile",
+   "w": 7.6
   },
   {
    "t": 50.6,
-   "text": "Exiled"
+   "text": "Exiled",
+   "w": 2.6
   },
   {
    "t": 59.5,
-   "text": "Who says madness can't be tamed"
+   "text": "Who says madness can't be tamed",
+   "w": 7.6
   },
   {
    "t": 63.1,
-   "text": "Who says fire can't be framed"
+   "text": "Who says fire can't be framed",
+   "w": 6.6
   },
   {
    "t": 72.0,
-   "text": "Mad alchemy"
+   "text": "Mad alchemy",
+   "w": 4.6
   },
   {
    "t": 74.3,
-   "text": "The gift"
+   "text": "The gift",
+   "w": 2.6
   },
   {
    "t": 75.5,
-   "text": "The curse"
+   "text": "The curse",
+   "w": 2.6
   },
   {
    "t": 76.8,
-   "text": "Spinning gold from the universe"
+   "text": "Spinning gold from the universe",
+   "w": 8.6
   },
   {
    "t": 80.8,
-   "text": "Mad alchemy"
+   "text": "Mad alchemy",
+   "w": 4.6
   },
   {
    "t": 83.0,
-   "text": "Create"
+   "text": "Create",
+   "w": 1.6
   },
   {
    "t": 83.8,
-   "text": "Destroy"
+   "text": "Destroy",
+   "w": 2.6
   },
   {
    "t": 85.0,
-   "text": "Unleashing madness as my ploy"
+   "text": "Unleashing madness as my ploy",
+   "w": 8.6
   },
   {
    "t": 92.5,
-   "text": "Paint the dark with colors untold"
+   "text": "Paint the dark with colors untold",
+   "w": 8.6
   },
   {
    "t": 97.6,
-   "text": "Words like weapons"
+   "text": "Words like weapons",
+   "w": 4.6
   },
   {
    "t": 100.3,
-   "text": "Sharp and cold"
+   "text": "Sharp and cold",
+   "w": 3.6
   },
   {
    "t": 102.4,
-   "text": "Tongue's a scalpel"
+   "text": "Tongue's a scalpel",
+   "w": 5.6
   },
   {
    "t": 105.6,
-   "text": "Cuts so deep"
+   "text": "Cuts so deep",
+   "w": 3.6
   },
   {
    "t": 107.7,
-   "text": "Wake the monsters that I keep"
+   "text": "Wake the monsters that I keep",
+   "w": 7.6
   },
   {
    "t": 114.0,
-   "text": "Cages crumble"
+   "text": "Cages crumble",
+   "w": 4.6
   },
   {
    "t": 116.4,
-   "text": "I break the lock"
+   "text": "I break the lock",
+   "w": 4.6
   },
   {
    "t": 118.6,
-   "text": "Madness fuels this ticking clock"
+   "text": "Madness fuels this ticking clock",
+   "w": 7.6
   },
   {
    "t": 122.3,
-   "text": "Not a victim"
+   "text": "Not a victim",
+   "w": 4.6
   },
   {
    "t": 124.6,
-   "text": "Not a saint"
+   "text": "Not a saint",
+   "w": 3.6
   },
   {
    "t": 126.4,
-   "text": "I'm the canvas and the paint"
+   "text": "I'm the canvas and the paint",
+   "w": 7.6
   },
   {
    "t": 135.5,
-   "text": "Mad alchemy"
+   "text": "Mad alchemy",
+   "w": 4.6
   },
   {
    "t": 137.8,
-   "text": "The gift"
+   "text": "The gift",
+   "w": 2.6
   },
   {
    "t": 139.1,
-   "text": "The curse"
+   "text": "The curse",
+   "w": 2.6
   },
   {
    "t": 140.4,
-   "text": "Spinning gold from the universe"
+   "text": "Spinning gold from the universe",
+   "w": 8.6
   },
   {
    "t": 144.6,
-   "text": "Mad alchemy"
+   "text": "Mad alchemy",
+   "w": 4.6
   },
   {
    "t": 146.8,
-   "text": "Create"
+   "text": "Create",
+   "w": 1.6
   },
   {
    "t": 147.6,
-   "text": "Destroy"
+   "text": "Destroy",
+   "w": 2.6
   },
   {
    "t": 148.9,
-   "text": "Unleashing madness as my ploy"
+   "text": "Unleashing madness as my ploy",
+   "w": 8.6
   }
  ]
 }

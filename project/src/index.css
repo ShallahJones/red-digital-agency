@@ -3181,3 +3181,95 @@ footer {
 
 .wl-blink { animation: wl-blink 1s step-end infinite; }
 @keyframes wl-blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ---- Screening page: pitch-deck dossier (glowing desktop-file icon + OpenSea link) ---- */
+.dossier {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,0,60,.18);
+}
+
+.dossier-p {
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(240,240,240,.55);
+  max-width: 46ch;
+  margin: 0 0 20px;
+}
+
+.dossier-row {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.desktop-file {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 84px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.desktop-file-icon {
+  position: relative;
+  width: 52px;
+  height: 66px;
+  background: linear-gradient(160deg, rgba(255,20,90,.22), rgba(255,0,60,.08));
+  border: 1px solid rgba(255,60,110,.55);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(255,20,90,.55), 0 0 24px rgba(255,0,60,.25);
+  animation: dossier-file-glow 2.6s ease-in-out infinite;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 8px;
+  transition: transform .15s ease;
+}
+
+.desktop-file:hover .desktop-file-icon {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.desktop-file-corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 12px 12px 0;
+  border-color: transparent rgba(10,4,6,.9) transparent transparent;
+}
+
+.desktop-file-label {
+  font-size: 9px;
+  letter-spacing: .12em;
+  font-weight: 700;
+  color: #ffd6e2;
+  text-shadow: 0 0 6px rgba(255,60,110,.9);
+}
+
+.desktop-file-name {
+  font-size: 10px;
+  letter-spacing: .02em;
+  color: rgba(240,240,240,.6);
+  text-align: center;
+  word-break: break-word;
+}
+
+@keyframes dossier-file-glow {
+  0%, 100% { box-shadow: 0 0 10px rgba(255,20,90,.55), 0 0 24px rgba(255,0,60,.25); }
+  50%      { box-shadow: 0 0 16px rgba(255,20,90,.85), 0 0 34px rgba(255,0,60,.45); }
+}
+
+.dossier-opensea {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-file-icon { animation: none; }
+}

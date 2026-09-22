@@ -62,6 +62,33 @@ export default function Screening() {
               <div>TIME <b>?? ??? ?? 2026 · 5:30 PM ET</b></div>
             </div>
           </div>
+
+          <div className="dossier">
+            <p className="dossier-p">Case file 001 is open. Read why MADJACKET exists before the gate does, then hold your seat on the collection page.</p>
+            <div className="dossier-row">
+              <a
+                className="desktop-file"
+                href="/madjacket-pitch-deck.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div className="desktop-file-icon" aria-hidden="true">
+                  <span className="desktop-file-corner" />
+                  <span className="desktop-file-label">PDF</span>
+                </div>
+                <span className="desktop-file-name">MADJACKET_OPEN_FILE.pdf</span>
+              </a>
+
+              <a
+                className="wl-btn wl-btn--ghost dossier-opensea"
+                href="https://opensea.io/collection/madjacket-rh/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                VIEW ON OPENSEA → <span className="wl-blink">_</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -3,6 +3,10 @@ import { supabase } from "../lib/supabase";
 import { isValidChecksum } from "../lib/keccak256";
 
 
+// Registration is closed. Flip to false to reopen — this alone controls the form;
+// no Supabase tables or policies are touched by this flag.
+const REGISTRATION_CLOSED = true;
+
 const LOCAL_KEY = "mj_whitelist";
 
 function getList(): string[] {
@@ -49,6 +53,10 @@ export default function Whitelist() {
   }, []);
 
   const register = useCallback(async () => {
+    if (REGISTRATION_CLOSED) {
+      setRegStatus({ type: "error", lines: ["// CLEARANCE REGISTRY CLOSED", "Registration for the Robinhood collection is closed. Watch @_madjacket for what's next."] });
+      return;
+    }
     const addr = regAddr.trim();
     if (!isValidAddr(addr)) {
       setRegStatus({ type: "error", lines: ["// REJECTED — INVALID ADDRESS", "Not a valid ETH address, or the checksum doesn't match. Copy it straight from your wallet."] });
@@ -153,6 +161,13 @@ export default function Whitelist() {
       <div className="wl-container">
         <div className="wl-title">MADJACKET — ROBINHOOD COLLECTION — CLEARANCE REGISTRY</div>
 
+        {REGISTRATION_CLOSED && (
+          <div className="wl-status wl-status--error" style={{ marginBottom: 22 }}>
+            <span className="wl-status-code">// REGISTRY CLOSED</span>
+            <span>The Robinhood collection whitelist is no longer accepting new signals. Watch @_madjacket for what's next.</span>
+          </div>
+        )}
+
         {counter && (() => {
           const total = counter.count + counter.overflow;
           const pct = Math.round((total / counter.cap) * 100);
@@ -184,6 +199,7 @@ export default function Whitelist() {
             autoComplete="off"
             spellCheck={false}
             value={regAddr}
+            disabled={REGISTRATION_CLOSED}
             onChange={e => setRegAddr(e.target.value)}
             onKeyDown={e => e.key === "Enter" && register()}
           />
@@ -194,8 +210,8 @@ export default function Whitelist() {
               {regStatus.lines.slice(1).map((l, i) => <span key={i}>{l}</span>)}
             </div>
           )}
-          <button className="wl-btn" onClick={register} disabled={loading}>
-            {loading ? "TRANSMITTING..." : "REGISTER FOR CLEARANCE"}
+          <button className="wl-btn" onClick={register} disabled={loading || REGISTRATION_CLOSED}>
+            {loading ? "TRANSMITTING..." : REGISTRATION_CLOSED ? "REGISTRY CLOSED" : "REGISTER FOR CLEARANCE"}
           </button>
         </div>
 
@@ -231,7 +247,7 @@ export default function Whitelist() {
         {/* INTEL NOTE */}
         <div className="wl-intel">
           <div className="wl-intel-head">INTEL NOTE</div>
-          <p>This is a drawing. The Red Cathedral rewards those who remember. You read the lore. You know the world. Step forward.</p>
+          <p>This drawing is closed. The Red Cathedral has counted who remembered. If your signal was received, watch @_madjacket for what comes next.</p>
         </div>
       </div>
     </div>

@@ -64,7 +64,7 @@ export default function Screening() {
           </div>
 
           <div className="dossier">
-            <p className="dossier-p">Case file 001 is open. Read why MADJACKET exists before the gate does, then hold your seat on the collection page.</p>
+            <p className="dossier-p">The full pitch deck is open for review — the vision, the world, the numbers behind MADJACKET. Read it, then hold your seat on the collection page.</p>
             <div className="dossier-row">
               <a
                 className="desktop-file"
@@ -76,7 +76,7 @@ export default function Screening() {
                   <span className="desktop-file-corner" />
                   <span className="desktop-file-label">PDF</span>
                 </div>
-                <span className="desktop-file-name">MADJACKET_OPEN_FILE.pdf</span>
+                <span className="desktop-file-name">MADJACKET_PITCHDECK.pdf</span>
               </a>
 
               <a

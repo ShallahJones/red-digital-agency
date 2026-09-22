@@ -86,7 +86,7 @@ export default function Whitelist() {
       setLoading(false);
       saveAddr(norm);
       saveLate(norm);
-      setRegStatus({ type: "success", lines: ["// SIGNAL LOGGED — LATE ARRIVAL", `${addr.slice(0,6)}...${addr.slice(-4)} filed.`, "The Cathedral's first 199 seats are already claimed. Your signal was received all the same.", "Watch @_madjacket."] });
+      setRegStatus({ type: "success", lines: ["// SUBMISSION LOGGED — LATE ARRIVAL", `${addr.slice(0,6)}...${addr.slice(-4)} filed.`, "The Cathedral's first 199 seats are already claimed. Your submission was received all the same.", "Watch @_madjacket."] });
       setRegAddr("");
       return;
     }
@@ -164,7 +164,7 @@ export default function Whitelist() {
         {REGISTRATION_CLOSED && (
           <div className="wl-status wl-status--error" style={{ marginBottom: 22 }}>
             <span className="wl-status-code">// REGISTRY CLOSED</span>
-            <span>The Robinhood collection whitelist is no longer accepting new signals. Watch @_madjacket for what's next.</span>
+            <span>The Robinhood collection whitelist is no longer accepting new submissions. Watch @_madjacket for what's next.</span>
           </div>
         )}
 
@@ -247,7 +247,7 @@ export default function Whitelist() {
         {/* INTEL NOTE */}
         <div className="wl-intel">
           <div className="wl-intel-head">INTEL NOTE</div>
-          <p>This drawing is closed. The Red Cathedral has counted who remembered. If your signal was received, watch @_madjacket for what comes next.</p>
+          <p>This drawing is closed. The Red Cathedral has counted who remembered. If you submitted, watch @_madjacket for what comes next.</p>
         </div>
       </div>
     </div>

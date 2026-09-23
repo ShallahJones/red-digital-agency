@@ -306,7 +306,7 @@
   .section-p { font-size: 11px; letter-spacing: .1em; }
 
   /* ── Screening page ── */
-  #screening { padding: 32px 0 60px; }
+  #mint { padding: 32px 0 60px; }
   .screen-card { padding: 14px; }
   .cd {
     grid-template-columns: repeat(2, 1fr);

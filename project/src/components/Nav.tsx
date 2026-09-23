@@ -10,7 +10,7 @@ export default function Nav() {
       <span className="tag">ARRIVAL · ROBINHOOD</span>
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => isActive ? "active-nav" : ""}>HOME</NavLink>
-        <NavLink to="/screening" className={({ isActive }) => isActive ? "active-nav" : ""}>SCREENING</NavLink>
+        <NavLink to="/mint" className={({ isActive }) => isActive ? "active-nav" : ""}>MINT</NavLink>
         <NavLink to="/dataleak" className={({ isActive }) => isActive ? "active-nav" : ""}>DATALEAK</NavLink>
         <NavLink to="/red-pages" className={({ isActive }) => isActive ? "active-nav" : ""}>RED STRIPS</NavLink>
         <NavLink to="/whitelist" className={({ isActive }) => isActive ? "active-nav" : ""}>CLEARANCE</NavLink>

@@ -1,12 +1,12 @@
 import { useEffect, useRef } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { ModalProvider } from "./context/ModalContext";
 import Nav from "./components/Nav";
 import MobileNav from "./components/MobileNav";
 import ProfileModal from "./components/ProfileModal";
 import ScannerModal from "./components/ScannerModal";
 import Home from "./pages/Home";
-import Screening from "./pages/Screening";
+import Mint from "./pages/Mint";
 import Dataleak from "./pages/Dataleak";
 import RedPages from "./pages/RedPages";
 import Whitelist from "./pages/Whitelist";
@@ -93,7 +93,8 @@ export default function App() {
         <ScannerModal />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/screening" element={<Screening />} />
+          <Route path="/mint" element={<Mint />} />
+          <Route path="/screening" element={<Navigate to="/mint" replace />} />
           <Route path="/dataleak" element={<Dataleak />} />
           <Route path="/red-pages" element={<RedPages />} />
           <Route path="/whitelist" element={<Whitelist />} />

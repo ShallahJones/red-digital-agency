@@ -9,7 +9,7 @@ function pad2(n: number): string {
   return String(n).padStart(2, "0");
 }
 
-export default function Screening() {
+export default function Mint() {
   const [time, setTime] = useState({ d: "00", h: "00", m: "00", s: "00", live: false });
   const [glitching, setGlitching] = useState(false);
 
@@ -40,14 +40,14 @@ export default function Screening() {
 
   return (
     <div className="page-wrap">
-      <section id="screening">
+      <section id="mint">
         <div className="wrap">
           <div style={{ marginBottom: "8px" }}>
             <Link to="/" style={{ fontSize: "10px", letterSpacing: "3px", color: "rgba(255,0,60,.6)", textDecoration: "none" }}>
               ← BACK TO HOME
             </Link>
           </div>
-          <h2 className="section-h">SCREENING</h2>
+          <h2 className="section-h">MINT</h2>
           <p className="section-p">Countdown to mint day locked. Timestamp absolute. Eastern Time.</p>
           <div className="screen-card">
             <div className={`cd${glitching ? " cd-glitch" : ""}`} role="group" aria-label="Countdown">

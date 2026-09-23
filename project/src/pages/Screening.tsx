@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
-const TARGET_UTC = Date.UTC(2026, 8, 30, 21, 30, 0); // Sep 30 2026, 5:30 PM EDT (UTC-4)
+const TARGET_UTC = Date.UTC(2026, 8, 23, 21, 30, 0); // Sep 23 2026, 5:30 PM EDT (UTC-4)
 
-const TARGET_DATE_STR = "SEP 30 2026 · 5:30 PM ET";
+const TARGET_DATE_STR = "SEP 23 2026 · 5:30 PM ET";
 
 function pad2(n: number): string {
   return String(n).padStart(2, "0");

@@ -3,16 +3,15 @@ import { Link } from "react-router-dom";
 
 const TARGET_UTC = Date.UTC(2026, 8, 30, 21, 30, 0); // Sep 30 2026, 5:30 PM EDT (UTC-4)
 
-const GLITCH_CHARS = ['?', '¿', '‽', '⁇', '؟', '？'];
+const TARGET_DATE_STR = "SEP 30 2026 · 5:30 PM ET";
 
-function getGlitchyQuestionMarks(count: number): string {
-  return Array(count).fill(0).map(() => GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]).join('');
+function pad2(n: number): string {
+  return String(n).padStart(2, "0");
 }
 
-
 export default function Screening() {
-  const [time, setTime] = useState({ d: "??", h: "??", m: "??", s: "??", live: false });
-  const [glitchTick, setGlitchTick] = useState(0);
+  const [time, setTime] = useState({ d: "00", h: "00", m: "00", s: "00", live: false });
+  const [glitching, setGlitching] = useState(false);
 
   useEffect(() => {
     function tick() {
@@ -25,17 +24,18 @@ export default function Screening() {
       const m = Math.floor(s / 60);
       const sec = s % 60;
 
-      const dStr = getGlitchyQuestionMarks(String(d).length || 2);
-      const hStr = getGlitchyQuestionMarks(2);
-      const mStr = getGlitchyQuestionMarks(2);
-      const sStr = getGlitchyQuestionMarks(2);
-
-      setTime({ d: dStr, h: hStr, m: mStr, s: sStr, live });
-      setGlitchTick(prev => prev + 1);
+      setTime({ d: pad2(d), h: pad2(h), m: pad2(m), s: pad2(sec), live });
     }
     tick();
-    const id = setInterval(tick, 150);
-    return () => clearInterval(id);
+    const id = setInterval(tick, 1000);
+
+    // periodic glitch flicker on the digits — visual only, numbers stay real
+    const glitchId = setInterval(() => {
+      setGlitching(true);
+      setTimeout(() => setGlitching(false), 180);
+    }, 4000);
+
+    return () => { clearInterval(id); clearInterval(glitchId); };
   }, []);
 
   return (
@@ -50,16 +50,14 @@ export default function Screening() {
           <h2 className="section-h">SCREENING</h2>
           <p className="section-p">Countdown to mint day locked. Timestamp absolute. Eastern Time.</p>
           <div className="screen-card">
-            <div className="cd" role="group" aria-label="Countdown">
+            <div className={`cd${glitching ? " cd-glitch" : ""}`} role="group" aria-label="Countdown">
               <div className="box"><span>{time.d}</span><em>DAYS</em></div>
               <div className="box"><span>{time.h}</span><em>HOURS</em></div>
               <div className="box"><span>{time.m}</span><em>MIN</em></div>
               <div className="box"><span>{time.s}</span><em>SEC</em></div>
             </div>
             <div className="seat">
-              <div>STATUS <b>{time.live ? "LIVE" : "RESERVED"}</b></div>
-              <div>GATE <b>RED CATHEDRAL</b></div>
-              <div>TIME <b>?? ??? ?? 2026 · 5:30 PM ET</b></div>
+              <div>{time.live ? "MINT IS LIVE" : `TARGET · ${TARGET_DATE_STR}`}</div>
             </div>
           </div>
 

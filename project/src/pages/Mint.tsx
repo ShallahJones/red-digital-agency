@@ -57,7 +57,7 @@ export default function Mint() {
               <div className="box"><span>{time.s}</span><em>SEC</em></div>
             </div>
             <div className="seat">
-              <div>{time.live ? "MINT IS LIVE" : `TARGET · ${TARGET_DATE_STR}`}</div>
+              <div>{time.live ? "SOLD OUT" : `TARGET · ${TARGET_DATE_STR}`}</div>
             </div>
           </div>
 

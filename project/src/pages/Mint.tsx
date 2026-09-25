@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import PdfReader from "../components/PdfReader";
+
+const PITCH_DECK_SRC = "/madjacket-pitch-deck.pdf";
+const PITCH_DECK_TITLE = "MADJACKET_PITCHDECK.pdf";
 
 const TARGET_UTC = Date.UTC(2026, 8, 23, 21, 30, 0); // Sep 23 2026, 5:30 PM EDT (UTC-4)
 
@@ -12,6 +16,7 @@ function pad2(n: number): string {
 export default function Mint() {
   const [time, setTime] = useState({ d: "00", h: "00", m: "00", s: "00", live: false });
   const [glitching, setGlitching] = useState(false);
+  const [readerOpen, setReaderOpen] = useState(false);
 
   useEffect(() => {
     function tick() {
@@ -64,18 +69,17 @@ export default function Mint() {
           <div className="dossier">
             <p className="dossier-p">The full pitch deck is open for review — the vision, the world, the numbers behind MADJACKET. Read it, then hold your seat on the collection page.</p>
             <div className="dossier-row">
-              <a
+              <button
+                type="button"
                 className="desktop-file"
-                href="/madjacket-pitch-deck.pdf"
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => setReaderOpen(true)}
               >
                 <div className="desktop-file-icon" aria-hidden="true">
                   <span className="desktop-file-corner" />
                   <span className="desktop-file-label">PDF</span>
                 </div>
-                <span className="desktop-file-name">MADJACKET_PITCHDECK.pdf</span>
-              </a>
+                <span className="desktop-file-name">{PITCH_DECK_TITLE}</span>
+              </button>
 
               <a
                 className="wl-btn wl-btn--ghost dossier-opensea"
@@ -96,6 +100,13 @@ export default function Mint() {
           <div><Link to="/" style={{ color: "rgba(240,240,240,.25)", textDecoration: "none" }}>HOME</Link></div>
         </div>
       </footer>
+
+      <PdfReader
+        open={readerOpen}
+        onClose={() => setReaderOpen(false)}
+        src={PITCH_DECK_SRC}
+        title={PITCH_DECK_TITLE}
+      />
     </div>
   );
 }

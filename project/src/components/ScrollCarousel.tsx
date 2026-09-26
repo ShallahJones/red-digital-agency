@@ -1,27 +1,41 @@
 import { useRef, useEffect, useState } from "react";
-import { ITEMS } from "../data/items";
-import { useModal } from "../context/ModalContext";
 
 const OCTAGON = "polygon(14% 0%, 86% 0%, 100% 14%, 100% 86%, 86% 100%, 14% 100%, 0% 86%, 0% 14%)";
 
-const PFP_IMAGES = [
-  "/pfp/002.png",
-  "/pfp/004.png",
-  "/pfp/006.png",
-  "/pfp/007.png",
-  "/pfp/011.png",
-  "/pfp/195.png",
-  "/pfp/013.png",
-  "/pfp/018.png",
-  "/pfp/035.png",
-  "/pfp/050.png",
-  "/pfp/053.png",
-  "/pfp/132.png",
-  "/pfp/134.png",
-  "/pfp/140.png",
-  "/pfp/154.png",
-  "/pfp/201.png",
+// RH collection (1999 supply) — curated sample pulled straight from the mint export.
+// bg: "red" | "infected" (the sickly-green variant — used sparingly)
+const RH_TOKENS: { id: number; bg: "red" | "infected" }[] = [
+  { id: 175, bg: "red" },
+  { id: 354, bg: "red" },
+  { id: 405, bg: "red" },
+  { id: 546, bg: "red" },
+  { id: 701, bg: "red" },
+  { id: 718, bg: "red" },
+  { id: 1335, bg: "red" },
+  { id: 1537, bg: "red" },
+  { id: 988, bg: "red" },
+  { id: 102, bg: "red" },
+  { id: 1935, bg: "red" },
+  { id: 199, bg: "red" },
+  { id: 110, bg: "red" },
+  { id: 393, bg: "red" },
+  { id: 1013, bg: "red" },
+  { id: 1904, bg: "red" },
+  { id: 1643, bg: "red" },
+  { id: 418, bg: "red" },
+  { id: 230, bg: "red" },
+  { id: 506, bg: "red" },
+  { id: 762, bg: "infected" },
+  { id: 1146, bg: "infected" },
+  { id: 892, bg: "infected" },
+  { id: 1691, bg: "infected" },
 ];
+
+// Which infected (green-bg) cards get the graffiti tag, and which word — sparing, not every one.
+const TAG_OVERRIDES: Record<number, "GANG!" | "SQUAD" | undefined> = {
+  762: "GANG!",
+  892: "SQUAD",
+};
 
 interface CardData {
   id: string;
@@ -29,7 +43,8 @@ interface CardData {
   name: string;
   status: string;
   img: string;
-  itemRef?: (typeof ITEMS)[0];
+  bg: "red" | "infected";
+  tag?: "GANG!" | "SQUAD";
 }
 
 interface LightboxState {
@@ -41,28 +56,17 @@ interface LightboxState {
 }
 
 function buildRows(): [CardData[], CardData[]] {
-  const all: CardData[] = [];
+  const statuses = ["DORMANT", "CONTAINED", "UNCONTAINED"];
 
-  ITEMS.forEach((item, i) => {
-    all.push({
-      id: item.id,
-      label: item.designation,
-      name: item.name || "AW_ASSET",
-      status: item.status,
-      img: item.img || PFP_IMAGES[i % PFP_IMAGES.length],
-      itemRef: item,
-    });
-  });
-
-  PFP_IMAGES.forEach((src, i) => {
-    all.push({
-      id: `pfp_${i}`,
-      label: `RSI-${String(200 + i).padStart(3, "0")}`,
-      name: "AW_ASSET",
-      status: ["DORMANT", "CONTAINED", "UNCONTAINED"][i % 3],
-      img: src,
-    });
-  });
+  const all: CardData[] = RH_TOKENS.map((t, i) => ({
+    id: `rh_${t.id}`,
+    label: `RSI-${String(t.id).padStart(4, "0")}`,
+    name: `MADJACKET #${t.id}`,
+    status: statuses[i % statuses.length],
+    img: `/pfp/rh/${t.id}.png`,
+    bg: t.bg,
+    tag: TAG_OVERRIDES[t.id],
+  }));
 
   const half = Math.ceil(all.length / 2);
   const row1 = all.slice(0, half);
@@ -104,22 +108,20 @@ function Lightbox({ state, onClose }: { state: LightboxState; onClose: () => voi
   );
 }
 
+function GraffitiTag({ text }: { text: "GANG!" | "SQUAD" }) {
+  return (
+    <div className="sc-graffiti" aria-hidden="true">
+      <span className="sc-graffiti-text">{text}</span>
+    </div>
+  );
+}
+
 function CarouselCard({ card, onLightbox }: { card: CardData; onLightbox: (c: CardData) => void }) {
-  const { openProfile } = useModal();
-
-  function handleClick() {
-    if (card.itemRef) {
-      openProfile(card.itemRef);
-    } else {
-      onLightbox(card);
-    }
-  }
-
   return (
     <div
-      className="sc-card"
+      className={`sc-card${card.bg === "infected" ? " sc-card-infected" : ""}`}
       style={{ clipPath: OCTAGON }}
-      onClick={handleClick}
+      onClick={() => onLightbox(card)}
     >
       <div className="sc-card-inner">
         {card.img ? (
@@ -127,6 +129,7 @@ function CarouselCard({ card, onLightbox }: { card: CardData; onLightbox: (c: Ca
         ) : (
           <div className="sc-card-placeholder" />
         )}
+        {card.tag && <GraffitiTag text={card.tag} />}
         <div className="sc-card-overlay" />
         <div className="sc-card-meta">
           <div className="sc-card-label">{card.label}</div>

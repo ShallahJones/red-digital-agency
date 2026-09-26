@@ -3426,3 +3426,36 @@ footer {
   .pdfr-scaler { transition: none; }
   .pdfr-content { transition: opacity .15s ease; }
 }
+
+/* Graffiti tag overlay — spray/stencil style, black ink, used sparingly on infected(green)-bg cards */
+.sc-card-infected .sc-card-img {
+  filter: saturate(1.05);
+}
+
+.sc-graffiti {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sc-graffiti-text {
+  font-family: "Bebas Neue", "Arial Narrow", system-ui, sans-serif;
+  font-size: clamp(28px, 6vw, 46px);
+  font-weight: 700;
+  letter-spacing: .05em;
+  color: #0a0a0a;
+  transform: rotate(-9deg) skewX(-6deg);
+  text-shadow:
+    2px 0 0 rgba(0,0,0,.55),
+    -1px 1px 0 rgba(0,0,0,.4),
+    0 2px 6px rgba(0,0,0,.35);
+  -webkit-text-stroke: 1.5px #050505;
+  mix-blend-mode: multiply;
+  opacity: .92;
+  white-space: nowrap;
+}

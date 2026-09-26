@@ -3,38 +3,39 @@ import { useRef, useEffect, useState } from "react";
 const OCTAGON = "polygon(14% 0%, 86% 0%, 100% 14%, 100% 86%, 86% 100%, 14% 100%, 0% 86%, 0% 14%)";
 
 // RH collection (1999 supply) — curated sample pulled straight from the mint export.
+// Picked for a spread across weapons/eyes/hair/glasses, not just repeats of the same look.
 // bg: "red" | "infected" (the sickly-green variant — used sparingly)
 const RH_TOKENS: { id: number; bg: "red" | "infected" }[] = [
-  { id: 175, bg: "red" },
-  { id: 354, bg: "red" },
-  { id: 405, bg: "red" },
-  { id: 546, bg: "red" },
-  { id: 701, bg: "red" },
-  { id: 718, bg: "red" },
-  { id: 1335, bg: "red" },
-  { id: 1537, bg: "red" },
-  { id: 988, bg: "red" },
-  { id: 102, bg: "red" },
-  { id: 1935, bg: "red" },
-  { id: 199, bg: "red" },
-  { id: 110, bg: "red" },
-  { id: 393, bg: "red" },
-  { id: 1013, bg: "red" },
-  { id: 1904, bg: "red" },
-  { id: 1643, bg: "red" },
-  { id: 418, bg: "red" },
-  { id: 230, bg: "red" },
-  { id: 506, bg: "red" },
-  { id: 762, bg: "infected" },
-  { id: 1146, bg: "infected" },
-  { id: 892, bg: "infected" },
-  { id: 1691, bg: "infected" },
+  { id: 1286, bg: "red" },
+  { id: 521, bg: "red" },
+  { id: 1884, bg: "red" },
+  { id: 573, bg: "red" },
+  { id: 143, bg: "red" },
+  { id: 789, bg: "red" },
+  { id: 1921, bg: "red" },
+  { id: 491, bg: "red" },
+  { id: 1564, bg: "red" },
+  { id: 476, bg: "red" },
+  { id: 1888, bg: "red" },
+  { id: 841, bg: "red" },
+  { id: 765, bg: "red" },
+  { id: 723, bg: "red" },
+  { id: 241, bg: "red" },
+  { id: 1366, bg: "red" },
+  { id: 281, bg: "red" },
+  { id: 381, bg: "red" },
+  { id: 1504, bg: "red" },
+  { id: 538, bg: "red" },
+  { id: 1543, bg: "infected" },
+  { id: 1818, bg: "infected" },
+  { id: 1841, bg: "infected" },
+  { id: 1926, bg: "infected" },
 ];
 
 // Which infected (green-bg) cards get the graffiti tag, and which word — sparing, not every one.
 const TAG_OVERRIDES: Record<number, "GANG!" | "SQUAD" | undefined> = {
-  762: "GANG!",
-  892: "SQUAD",
+  1818: "GANG!",
+  1926: "SQUAD",
 };
 
 interface CardData {
@@ -108,10 +109,28 @@ function Lightbox({ state, onClose }: { state: LightboxState; onClose: () => voi
   );
 }
 
+// Hidden SVG filter that roughs up the tag's edges so it reads as spray, not typed text.
+function SprayFilterDefs() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+      <defs>
+        <filter id="sc-spray-rough" x="-30%" y="-30%" width="160%" height="160%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="4" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </defs>
+    </svg>
+  );
+}
+
 function GraffitiTag({ text }: { text: "GANG!" | "SQUAD" }) {
   return (
     <div className="sc-graffiti" aria-hidden="true">
       <span className="sc-graffiti-text">{text}</span>
+      <span className="sc-drip sc-drip-1" />
+      <span className="sc-drip sc-drip-2" />
+      <span className="sc-drip sc-drip-3" />
+      <span className="sc-drip sc-drip-4" />
     </div>
   );
 }
@@ -184,6 +203,7 @@ export default function ScrollCarousel() {
 
   return (
     <>
+      <SprayFilterDefs />
       <Lightbox state={lightbox} onClose={closeLightbox} />
       <div className="sc-scroll-wrapper" ref={wrapRef}>
         <div className="sc-sticky">

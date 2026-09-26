@@ -3427,7 +3427,9 @@ footer {
   .pdfr-content { transition: opacity .15s ease; }
 }
 
-/* Graffiti tag overlay — spray/stencil style, black ink, used sparingly on infected(green)-bg cards */
+
+/* Graffiti tag overlay — big, spray-can black ink with a rough edge and dripping paint,
+   used sparingly on infected(green)-bg cards only. */
 .sc-card-infected .sc-card-img {
   filter: saturate(1.05);
 }
@@ -3440,22 +3442,40 @@ footer {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .sc-graffiti-text {
+  position: relative;
   font-family: "Bebas Neue", "Arial Narrow", system-ui, sans-serif;
-  font-size: clamp(28px, 6vw, 46px);
+  font-size: clamp(38px, 11vw, 68px);
   font-weight: 700;
-  letter-spacing: .05em;
+  letter-spacing: .03em;
   color: #0a0a0a;
-  transform: rotate(-9deg) skewX(-6deg);
+  transform: rotate(-10deg) skewX(-7deg) scale(1.08);
   text-shadow:
-    2px 0 0 rgba(0,0,0,.55),
-    -1px 1px 0 rgba(0,0,0,.4),
-    0 2px 6px rgba(0,0,0,.35);
-  -webkit-text-stroke: 1.5px #050505;
+    3px 0 0 rgba(0,0,0,.6),
+    -2px 2px 0 rgba(0,0,0,.5),
+    0 3px 10px rgba(0,0,0,.45);
+  -webkit-text-stroke: 2px #050505;
   mix-blend-mode: multiply;
-  opacity: .92;
+  opacity: .96;
   white-space: nowrap;
+  filter: url(#sc-spray-rough);
 }
+
+/* Dripping paint — tapered blobs hanging off the tag, each faded to a point */
+.sc-drip {
+  position: absolute;
+  top: 52%;
+  width: 9px;
+  background: linear-gradient(to bottom, rgba(5,5,5,.9), rgba(5,5,5,.75) 40%, rgba(5,5,5,0));
+  clip-path: polygon(20% 0%, 80% 0%, 65% 70%, 50% 100%, 35% 70%);
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.sc-drip-1 { left: 24%; height: 46px; width: 7px; transform: rotate(-6deg); }
+.sc-drip-2 { left: 42%; height: 68px; width: 10px; transform: rotate(3deg); }
+.sc-drip-3 { left: 63%; height: 40px; width: 6px; transform: rotate(-4deg); }
+.sc-drip-4 { left: 78%; height: 56px; width: 8px; transform: rotate(5deg); }

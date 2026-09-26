@@ -39,6 +39,7 @@ export default function MobileNav() {
           <nav className="mob-drawer-links">
             <NavLink to="/" end className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>HOME</NavLink>
             <NavLink to="/mint" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>MINT</NavLink>
+            <NavLink to="/about" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>ABOUT</NavLink>
             <NavLink to="/dataleak" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>DATALEAK</NavLink>
             <NavLink to="/red-pages" className={({ isActive }) => isActive ? "mob-link active" : "mob-link"}>RED STRIPS</NavLink>
             <a className="mob-link" href="/doaf/">DOAF</a>

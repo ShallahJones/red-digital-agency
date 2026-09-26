@@ -11,6 +11,7 @@ export default function Nav() {
       <div className="nav-links">
         <NavLink to="/" end className={({ isActive }) => isActive ? "active-nav" : ""}>HOME</NavLink>
         <NavLink to="/mint" className={({ isActive }) => isActive ? "active-nav" : ""}>MINT</NavLink>
+        <NavLink to="/about" className={({ isActive }) => isActive ? "active-nav" : ""}>ABOUT</NavLink>
         <NavLink to="/dataleak" className={({ isActive }) => isActive ? "active-nav" : ""}>DATALEAK</NavLink>
         <NavLink to="/red-pages" className={({ isActive }) => isActive ? "active-nav" : ""}>RED STRIPS</NavLink>
         <NavLink to="/whitelist" className={({ isActive }) => isActive ? "active-nav" : ""}>CLEARANCE</NavLink>

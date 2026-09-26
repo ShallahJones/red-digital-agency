@@ -7,6 +7,7 @@ import ProfileModal from "./components/ProfileModal";
 import ScannerModal from "./components/ScannerModal";
 import Home from "./pages/Home";
 import Mint from "./pages/Mint";
+import About from "./pages/About";
 import Dataleak from "./pages/Dataleak";
 import RedPages from "./pages/RedPages";
 import Whitelist from "./pages/Whitelist";
@@ -94,6 +95,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/mint" element={<Mint />} />
+          <Route path="/about" element={<About />} />
           <Route path="/screening" element={<Navigate to="/mint" replace />} />
           <Route path="/dataleak" element={<Dataleak />} />
           <Route path="/red-pages" element={<RedPages />} />

@@ -3516,3 +3516,10 @@ footer {
   letter-spacing: .08em;
   color: rgba(240,240,240,.4);
 }
+
+/* ---- Mint page: standalone OpenSea link (dossier moved to /about) ---- */
+.mint-opensea-row {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255,0,60,.18);
+}

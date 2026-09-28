@@ -60,6 +60,17 @@ export default function Mint() {
               <div>{time.live ? "SOLD OUT" : `TARGET · ${TARGET_DATE_STR}`}</div>
             </div>
           </div>
+
+          <div className="mint-opensea-row">
+            <a
+              className="wl-btn wl-btn--ghost dossier-opensea"
+              href="https://opensea.io/collection/madjacket-rh/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              VIEW ON OPENSEA → <span className="wl-blink">_</span>
+            </a>
+          </div>
         </div>
       </section>
 

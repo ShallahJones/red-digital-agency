@@ -3523,3 +3523,54 @@ footer {
   padding-top: 24px;
   border-top: 1px solid rgba(255,0,60,.18);
 }
+
+/* ---- About page: big centered, gently floating pitch-deck file icon ---- */
+.about-pitch-showcase {
+  display: flex;
+  justify-content: center;
+  margin: 36px 0 8px;
+}
+
+.desktop-file--big {
+  width: 160px;
+  gap: 14px;
+  animation: desktop-file-float 3.6s ease-in-out infinite;
+}
+
+.desktop-file--big .desktop-file-icon {
+  width: 108px;
+  height: 138px;
+  border-radius: 6px;
+  padding-bottom: 16px;
+  box-shadow: 0 0 18px rgba(255,20,90,.5), 0 0 42px rgba(255,0,60,.22);
+}
+
+.desktop-file--big .desktop-file-corner {
+  border-width: 0 22px 22px 0;
+}
+
+.desktop-file--big .desktop-file-label {
+  font-size: 15px;
+  letter-spacing: .16em;
+}
+
+.desktop-file--big .desktop-file-name {
+  font-size: 12px;
+}
+
+.desktop-file--big:hover .desktop-file-icon {
+  transform: translateY(-2px) scale(1.05);
+}
+
+@keyframes desktop-file-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+
+.dossier-row--center {
+  justify-content: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desktop-file--big { animation: none; }
+}

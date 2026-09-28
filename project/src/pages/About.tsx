@@ -37,10 +37,10 @@ export default function About() {
               the mechanics, the numbers, who's really behind it. It wasn't supposed to leak. It did anyway.
               Open it if you want the whole picture before you take a seat.
             </p>
-            <div className="dossier-row">
+            <div className="about-pitch-showcase">
               <button
                 type="button"
-                className="desktop-file"
+                className="desktop-file desktop-file--big"
                 onClick={() => setReaderOpen(true)}
               >
                 <div className="desktop-file-icon" aria-hidden="true">
@@ -49,7 +49,9 @@ export default function About() {
                 </div>
                 <span className="desktop-file-name">{PITCH_DECK_TITLE}</span>
               </button>
+            </div>
 
+            <div className="dossier-row dossier-row--center">
               <a
                 className="wl-btn wl-btn--ghost dossier-opensea"
                 href="https://opensea.io/collection/madjacket-rh/"

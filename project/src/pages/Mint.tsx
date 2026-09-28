@@ -60,13 +60,6 @@ export default function Mint() {
               <div>{time.live ? "SOLD OUT" : `TARGET · ${TARGET_DATE_STR}`}</div>
             </div>
           </div>
-
-          <div className="dossier">
-            <p className="dossier-p">
-              Full file on what this actually is — the world, the numbers, who's behind it — lives on
-              its own page now. <Link to="/about" style={{ color: "rgba(255,60,110,.9)", textDecoration: "underline" }}>Read the file →</Link>
-            </p>
-          </div>
         </div>
       </section>
 
